@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DIH Defense – Official Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root{
+      --accent:#4cafef;
+      --accent-soft:#4cafef33;
+      --bg:#05060a;
+      --panel:#11141d;
+      --border:#262c3a;
+      --text:#f5f7fb;
+      --muted:#8f98aa;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:radial-gradient(circle at 20% 20%,#303540 0,#05060a 45%,#020308 80%);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    header{
+      width:100%;
+      max-width:960px;
+      padding:18px 16px 8px;
+    }
+    h1{
+      margin:0;
+      font-size:32px;
+      letter-spacing:1px;
+      text-shadow:0 0 14px #4cafef66;
+    }
+    .subtitle{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .note-banner{
+      margin-top:12px;
+      padding:10px 14px;
+      border-radius:10px;
+      background:#1b2230;
+      border:1px solid var(--accent-soft);
+      font-size:14px;
+      font-weight:600;
+      text-align:center;
+      color:var(--accent);
+    }
+    main{
+      width:100%;
+      max-width:960px;
+      padding:8px 16px 26px;
+      display:grid;
+      grid-template-columns:minmax(0,2fr) minmax(0,1.3fr);
+      gap:16px;
+    }
+    @media(max-width:800px){
+      main{grid-template-columns:1fr;}
+    }
+    .panel{
+      background:var(--panel);
+      border-radius:12px;
+      border:1px solid var(--border);
+      box-shadow:0 10px 30px rgba(0,0,0,.7);
+      padding:14px 16px;
+    }
+    .panel h2{
+      margin:0 0 8px;
+      font-size:18px;
+    }
+    .panel p{
+      margin:4px 0;
+      font-size:14px;
+      color:var(--muted);
+    }
+    .play-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:10px 18px;
+      border-radius:999px;
+      border:1px solid var(--accent-soft);
+      background:#182132;
+      color:var(--text);
+      font-size:15px;
+      font-weight:600;
+      text-decoration:none;
+      margin-top:8px;
+      cursor:pointer;
+      transition:background .15s,box-shadow .15s,transform .05s;
+    }
+    .play-button span.icon{margin-right:8px;font-size:18px;}
+    .play-button:hover{
+      background:#1f2a3d;
+      box-shadow:0 0 0 1px var(--accent-soft),0 0 14px rgba(0,0,0,.8);
+    }
+    .play-button:active{transform:translateY(1px);}
+    .info-list{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--muted);}
+    .info-list li{margin:2px 0;}
+    .tag{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      background:#1b2230;
+      border:1px solid var(--accent-soft);
+      font-size:11px;
+      color:var(--accent);
+      margin-right:4px;
+      margin-top:4px;
+    }
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+      gap:8px;
+      margin-top:6px;
+    }
+    .stat-card{
+      background:#151a25;
+      border-radius:10px;
+      border:1px solid #262c3a;
+      padding:8px 10px;
+      font-size:12px;
+    }
+    .stat-label{color:var(--muted);font-size:11px;}
+    .stat-value{font-size:15px;font-weight:600;margin-top:2px;}
+    footer{
+      width:100%;
+      max-width:960px;
+      padding:0 16px 18px;
+      font-size:11px;
+      color:var(--muted);
+      text-align:center;
+    }
+    .section-title-small{
+      font-size:13px;
+      font-weight:600;
+      margin-top:8px;
+      margin-bottom:4px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>DIH Defense</h1>
+    <div class="subtitle">A solo‑developed tower defense game with global upgrades, multiple maps, and weekly updates.</div>
+    <div class="note-banner">
+      🔔 Check back every week for the updated game build!
+    </div>
+  </header>
+
+  <main>
+    <!-- Left: Play + Info -->
+    <section class="panel">
+      <h2>Play the Game</h2>
+      <p>Launch the latest version of DIH Defense in your browser.</p>
+      <a class="play-button" href="dih_defense.html" target="_blank" rel="noopener">
+        <span class="icon">▶️</span>
+        <span>Play DIH Defense</span>
+      </a>
+
+      <div class="section-title-small">Game Overview</div>
+      <p>DIH Defense is a Bloons‑style tower defense game featuring multiple maps, global upgrades, in‑match tower upgrades, and scaling difficulty with boss waves every 15 rounds.</p>
+
+      <div class="section-title-small">Currencies</div>
+      <ul class="info-list">
+        <li><b>In‑Map Currency (💵 Money):</b> Earned by defeating enemies. Used during a run to place towers, upgrade towers (up to 8 times), and buy/upgrade the Wooden Money Hut.</li>
+        <li><b>Upgrade Currency (⭐ Meta Currency):</b> Earned by surviving 50 waves (currently <b>$150</b> per 50 waves). Used outside the match to buy powerful global upgrades that permanently boost tower stats.</li>
+      </ul>
+
+      <div class="section-title-small">Core Rules</div>
+      <ul class="info-list">
+        <li>Survive waves of enemies that get stronger over time.</li>
+        <li>Boss enemies appear every 15 waves.</li>
+        <li>Place towers strategically—some maps have obstacles where towers cannot be placed.</li>
+        <li>Use in‑match upgrades to power up individual towers (max 8 upgrades each).</li>
+        <li>Use global upgrades to permanently boost tower families across all runs.</li>
+      </ul>
+
+      <div class="section-title-small">Tags</div>
+      <div>
+        <span class="tag">Tower Defense</span>
+        <span class="tag">Solo Dev</span>
+        <span class="tag">Browser Game</span>
+        <span class="tag">Weekly Updates</span>
+      </div>
+    </section>
+
+    <!-- Right: Info / Stats / About -->
+    <aside class="panel">
+      <h2>Info & Stats</h2>
+      <p><b>Created by:</b> An individual developer (Andrew)</p>
+      <p><b>Initial creation:</b> 2025 (DIH Defense prototype)</p>
+      <p><b>Current version:</b> v0.1 – Early Access</p>
+      <p><b>Iterations:</b> Multiple design passes to reach this version (UI, maps, upgrades, and balance).</p>
+
+      <div class="section-title-small">Example Game Stats (for this version)</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Global Upgrade Levels</div>
+          <div class="stat-value">Up to 5× per tower</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">In‑Match Upgrades</div>
+          <div class="stat-value">8 per tower</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Maps</div>
+          <div class="stat-value">3 (Forest, Desert, Ice)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Boss Waves</div>
+          <div class="stat-value">Every 15 waves</div>
+        </div>
+      </div>
+
+      <div class="section-title-small">About This Project</div>
+      <p>
+        <b>DIH Defense</b> was developed by an individual creator. Your feedback genuinely helps shape the future of the game.
+        If you have ideas, suggestions, or things you’d love to see added, feel free to email:
+        <b>atbankson@gmail.com</b>.
+      </p>
+      <p>Thanks for playing and supporting the project—check back often to see what’s new.</p>
+    </aside>
+  </main>
+
+  <footer>
+    DIH Defense • Ongoing development • Weekly updates planned. Replace the game file (dih_defense.html) to push new versions without changing this page.
+  </footer>
+</body>
+</html>

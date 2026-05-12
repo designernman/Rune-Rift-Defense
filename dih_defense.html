@@ -1,0 +1,193 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>DIH Defense</title><style>
+:root{--accent:#4cafef;--accent-soft:#4cafef33;--bg-dark:#080a0f;--panel-bg:#151922;--panel-border:#2a3140;--text-main:#f5f7fb;--text-muted:#8f98aa;}
+body{margin:0;background:radial-gradient(circle at 20% 20%,#303540 0,#080a0f 45%,#020308 80%);background-size:200% 200%;animation:bgShift 18s ease-in-out infinite;color:var(--text-main);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;}
+@keyframes bgShift{0%{background-position:0% 0%;}50%{background-position:100% 100%;}100%{background-position:0% 0%;}}
+h1{margin-top:20px;margin-bottom:6px;text-shadow:0 0 12px #4cafef66;letter-spacing:1px;font-weight:650;}
+.subtitle{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.panel{background:var(--panel-bg);border:1px solid:var(--panel-border);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.7);padding:14px 18px;margin:10px 0;}
+.panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;color:var(--text-muted);}
+.panel-title{font-size:15px;font-weight:550;color:var(--text-main);}
+.menu-layout{display:flex;gap:14px;min-height:180px;}
+.menu-main{flex:2;display:flex;flex-direction:column;gap:8px;}
+.menu-side{flex:1;display:flex;flex-direction:column;gap:8px;}
+.menu-button{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--accent-soft);background:#191f2a;color:var(--text-main);font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .15s,box-shadow .15s,transform .05s;}
+.menu-button span.label{font-weight:500;}
+.menu-button span.sub{font-size:11px;color:var(--text-muted);}
+.menu-button:hover{background:#1f2633;box-shadow:0 0 0 1px var(--accent-soft),0 0 12px rgba(0,0,0,.7);}
+.menu-button:active{transform:translateY(1px);box-shadow:0 0 0 1px var(--accent-soft),0 0 4px rgba(0,0,0,.7);}
+#homeScreen,#mapScreen,#upgradeScreen,#gameScreen{display:none;max-width:960px;width:100%;padding:0 16px 26px;box-sizing:border-box;}
+#metaCurrencyDisplay,#metaCurrencyDisplay2{font-weight:500;color:var(--accent);}
+#mapList{display:flex;flex-wrap:wrap;gap:10px;}
+.map-card{flex:1 1 180px;min-width:180px;max-width:260px;background:#171c26;border-radius:10px;border:1px solid #2a3140;padding:9px 11px;cursor:pointer;transition:background .15s,box-shadow .15s,transform .05s;}
+.map-card:hover{background:#1d2330;box-shadow:0 0 0 1px var(--accent-soft),0 0 12px rgba(0,0,0,.7);}
+.map-name{font-weight:500;margin-bottom:3px;}
+.map-desc{font-size:11px;color:var(--text-muted);margin-bottom:3px;}
+.map-tag{font-size:11px;color:var(--accent);}
+#upgradeList{display:flex;flex-wrap:wrap;gap:10px;}
+.upgrade-card{flex:1 1 220px;min-width:220px;max-width:280px;background:#171c26;border-radius:10px;border:1px solid #2a3140;padding:9px 11px;font-size:12px;}
+.upgrade-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.upgrade-name{font-weight:500;}
+.upgrade-level{color:var(--text-muted);}
+.upgrade-stats{margin-bottom:4px;color:var(--text-muted);}
+.upgrade-stats div{margin:1px 0;}
+.upgrade-cost{font-size:12px;color:var(--accent);margin-bottom:4px;}
+.upgrade-btn{width:100%;padding:6px 8px;border-radius:6px;border:1px solid var(--accent-soft);background:#191f2a;color:var(--text-main);font-size:12px;cursor:pointer;transition:background .15s,box-shadow .15s,transform .05s;}
+.upgrade-btn:hover{background:#1f2633;box-shadow:0 0 0 1px var(--accent-soft),0 0 10px rgba(0,0,0,.7);}
+.upgrade-btn:active{transform:translateY(1px);}
+.upgrade-btn.disabled{opacity:.4;cursor:default;box-shadow:none;}
+#gameTopBar{margin-top:10px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:12px;}
+#ui{margin-top:10px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:900px;}
+button.game-btn{cursor:pointer;font-size:12px;color:var(--text-main);background:#191f2a;border:1px solid var(--accent-soft);padding:4px 8px;border-radius:6px;text-align:center;transition:background .15s,box-shadow .15s,transform .05s;}
+button.game-btn:hover{background:#1f2633;box-shadow:0 0 0 1px var(--accent-soft),0 0 10px rgba(0,0,0,.7);}
+button.game-btn:active{transform:translateY(1px);}
+#selectedTowerLabel{color:var(--accent);font-weight:500;}
+#gameContainer{position:relative;}
+canvas{border:2px solid #3b4354;box-shadow:0 0 25px rgba(0,0,0,.8);margin-top:10px;border-radius:8px;background:#10131a;}
+.back-link{font-size:11px;color:var(--text-muted);cursor:pointer;}
+.back-link:hover{color:var(--accent);text-decoration:underline;}
+</style></head><body>
+<h1>DIH Defense</h1><div class="subtitle">Dark Steel • Global Upgrades • Multiple Maps • Endless Waves</div>
+
+<div id="homeScreen" class="panel">
+  <div class="panel-header">
+    <div class="panel-title">Main Hub</div>
+    <div>Upgrade Currency: <span id="metaCurrencyDisplay">$0</span></div>
+  </div>
+  <div class="menu-layout">
+    <div class="menu-main">
+      <button class="menu-button" onclick="goToMapSelect()">
+        <span class="label">Play</span><span class="sub">Choose a map and start a run</span>
+      </button>
+      <button class="menu-button" onclick="goToUpgrades()">
+        <span class="label">Upgrades</span><span class="sub">Boost towers permanently</span>
+      </button>
+      <button class="menu-button" onclick="showInfoAlert()">
+        <span class="label">How to Play</span><span class="sub">Controls, tips, and basics</span>
+      </button>
+    </div>
+    <div class="menu-side">
+      <button class="menu-button" onclick="alert('Coming soon!')">
+        <span class="label">Stats</span><span class="sub">Lifetime waves & progress</span>
+      </button>
+      <button class="menu-button" onclick="alert('You are already in DIH Defense!')">
+        <span class="label">About</span><span class="sub">DIH Defense info</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="mapScreen" class="panel">
+  <div class="panel-header">
+    <div class="panel-title">Select Map</div>
+    <div class="back-link" onclick="goHome()">← Back to Menu</div>
+  </div>
+  <div id="mapList">
+    <div class="map-card" onclick="startGameOnMap('forest')">
+      <div class="map-name">Forest Trail</div>
+      <div class="map-desc">Misty green woods with a winding path.</div>
+      <div class="map-tag">Theme: Forest • Difficulty: Normal</div>
+    </div>
+    <div class="map-card" onclick="startGameOnMap('desert')">
+      <div class="map-name">Desert Canyon</div>
+      <div class="map-desc">Hot canyon with long sightlines.</div>
+      <div class="map-tag">Theme: Desert • Difficulty: Harder</div>
+    </div>
+    <div class="map-card" onclick="startGameOnMap('ice')">
+      <div class="map-name">Frozen Valley</div>
+      <div class="map-desc">Cold valley with sharp turns.</div>
+      <div class="map-tag">Theme: Ice • Difficulty: Hard</div>
+    </div>
+  </div>
+</div>
+
+<div id="upgradeScreen" class="panel">
+  <div class="panel-header">
+    <div class="panel-title">Tower Upgrades</div>
+    <div>
+      <span class="back-link" onclick="goHome()">← Back to Menu</span>
+      &nbsp;&nbsp;|&nbsp;&nbsp;Upgrade Currency: <span id="metaCurrencyDisplay2">$0</span>
+    </div>
+  </div>
+  <div id="upgradeList"></div>
+</div>
+
+<div id="gameScreen">
+  <div id="gameTopBar" class="panel">
+    <span id="lives">Lives: 20</span>
+    <span id="money">Money: 150</span>
+    <span id="wave">Wave: 1</span>
+    <button id="startWaveBtn" class="game-btn">Start Wave</button>
+    <button id="autoWaveBtn" class="game-btn">Auto: Off</button>
+    <button id="pauseBtn" class="game-btn">Pause</button>
+    <button id="speedBtn" class="game-btn">Speed: 1x</button>
+    <span>Selected: <span id="selectedTowerLabel">dart</span></span>
+    <span class="back-link" onclick="endRunToMenu()">End Run & Return to Menu</span>
+  </div>
+  <div id="ui" class="panel">
+    <button class="game-btn" onclick="selectTower('dart')">Dart<br>$50</button>
+    <button class="game-btn" onclick="selectTower('sniper')">Sniper<br>$120</button>
+    <button class="game-btn" onclick="selectTower('cannon')">Cannon<br>$100</button>
+    <button class="game-btn" onclick="selectTower('rapid')">Rapid<br>$80</button>
+    <button class="game-btn" onclick="selectTower('heavy')">Heavy<br>$150</button>
+    <button class="game-btn" onclick="selectTower('frost')">Frost<br>$90</button>
+    <button class="game-btn" onclick="selectTower('laser')">Laser<br>$140</button>
+    <button class="game-btn" onclick="selectTower('flamethrower')">Flame<br>$110</button>
+    <button class="game-btn" onclick="selectTower('poison')">Poison<br>$95</button>
+    <button class="game-btn" onclick="selectTower('shock')">Shock<br>$130</button>
+    <button class="game-btn" onclick="selectTower('mortar')">Mortar<br>$180</button>
+    <button class="game-btn" onclick="selectTower('plasma')">Plasma<br>$160</button>
+    <button class="game-btn" onclick="selectTower('miniGun')">MiniGun<br>$140</button>
+    <button class="game-btn" onclick="selectTower('railgun')">Railgun<br>$200</button>
+    <button class="game-btn" onclick="selectTower('storm')">Storm<br>$150</button>
+  </div>
+  <div id="gameContainer"><canvas id="game" width="900" height="520"></canvas></div>
+</div>
+
+<script>
+const homeScreen=document.getElementById('homeScreen'),mapScreen=document.getElementById('mapScreen'),upgradeScreen=document.getElementById('upgradeScreen'),gameScreen=document.getElementById('gameScreen'),metaCurrencyDisplay=document.getElementById('metaCurrencyDisplay'),metaCurrencyDisplay2=document.getElementById('metaCurrencyDisplay2'),upgradeListEl=document.getElementById('upgradeList');
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const livesEl=document.getElementById('lives'),moneyEl=document.getElementById('money'),waveEl=document.getElementById('wave'),startWaveBtn=document.getElementById('startWaveBtn'),pauseBtn=document.getElementById('pauseBtn'),speedBtn=document.getElementById('speedBtn'),autoWaveBtn=document.getElementById('autoWaveBtn'),selectedTowerLabel=document.getElementById('selectedTowerLabel');
+const WIDTH=canvas.width,HEIGHT=canvas.height;
+let metaCurrency=0,towerUpgradeLevels={},MAX_UPGRADE_LEVEL=5,UPGRADE_COST=100;
+let lives=20,money=150,wave=1,enemies=[],towers=[],bullets=[],path=[],gameOver=false,waveInProgress=false,selectedTowerType="dart",paused=false,speedMultiplier=1,currentMapKey='forest',wavesCompletedThisRun=0,autoWave=false;
+const ENEMY_TYPES={basic:{speed:.6,health:25,reward:5,color:"#ffcc00",shape:"circle"},fast:{speed:1.2,health:18,reward:4,color:"#00ffcc",shape:"triangle"},tank:{speed:.4,health:90,reward:10,color:"#ffaa00",shape:"square"},regen:{speed:.6,health:35,reward:6,color:"#66ff66",shape:"circle"},armored:{speed:.5,health:130,reward:12,color:"#999999",shape:"square"},swarm:{speed:1.0,health:10,reward:2,color:"#ff66aa",shape:"triangle"},ghost:{speed:.9,health:28,reward:7,color:"#ccccff",shape:"diamond"},brute:{speed:.35,health:220,reward:20,color:"#cc3300",shape:"square"},splitter:{speed:.7,health:45,reward:8,color:"#33ccff",shape:"hex"},elite:{speed:.8,health:160,reward:25,color:"#ff00ff",shape:"hex"},boss:{speed:.4,health:800,reward:100,color:"#ff4444",shape:"oct"}};
+const BASE_TOWER_TYPES={dart:{range:120,fireRate:20,damage:10,speed:5,color:"#00aaff",cost:50},sniper:{range:999,fireRate:50,damage:35,speed:8,color:"#ffffff",cost:120},cannon:{range:150,fireRate:40,damage:50,speed:4,color:"#ffaa00",cost:100},rapid:{range:100,fireRate:7,damage:6,speed:6,color:"#33ff33",cost:80},heavy:{range:140,fireRate:45,damage:70,speed:4,color:"#ff3333",cost:150},frost:{range:130,fireRate:25,damage:5,speed:5,color:"#66ccff",cost:90},laser:{range:160,fireRate:15,damage:15,speed:10,color:"#ff00ff",cost:140},flamethrower:{range:90,fireRate:4,damage:3,speed:4,color:"#ff6600",cost:110},poison:{range:130,fireRate:20,damage:8,speed:5,color:"#66ff66",cost:95},shock:{range:110,fireRate:12,damage:12,speed:7,color:"#ffff33",cost:130},mortar:{range:200,fireRate:70,damage:90,speed:3,color:"#999999",cost:180},plasma:{range:150,fireRate:18,damage:20,speed:9,color:"#00ffff",cost:160},miniGun:{range:110,fireRate:2,damage:2,speed:7,color:"#ff99ff",cost:140},railgun:{range:220,fireRate:60,damage:120,speed:12,color:"#00ff99",cost:200},storm:{range:140,fireRate:15,damage:18,speed:8,color:"#3399ff",cost:150}};
+const MAPS={forest:{name:"Forest Trail",difficulty:1.0},desert:{name:"Desert Canyon",difficulty:1.15},ice:{name:"Frozen Valley",difficulty:1.3}};
+function getTowerLevel(n){return towerUpgradeLevels[n]||0;}
+function getTowerStats(n){const b=BASE_TOWER_TYPES[n],lvl=getTowerLevel(n),m=Math.pow(1.5,lvl);return{range:b.range*m,damage:b.damage*m,speed:b.speed*m,fireRate:b.fireRate/m,color:b.color,cost:b.cost};}
+function getTowerStatsNext(n){const b=BASE_TOWER_TYPES[n],lvl=getTowerLevel(n)+1,m=Math.pow(1.5,lvl);return{range:b.range*m,damage:b.damage*m,speed:b.speed*m,fireRate:b.fireRate/m};}
+function createPathForMap(k){if(k==='forest'){path=[{x:0,y:HEIGHT*.65},{x:WIDTH*.15,y:HEIGHT*.65},{x:WIDTH*.15,y:HEIGHT*.35},{x:WIDTH*.3,y:HEIGHT*.35},{x:WIDTH*.3,y:HEIGHT*.8},{x:WIDTH*.5,y:HEIGHT*.8},{x:WIDTH*.5,y:HEIGHT*.25},{x:WIDTH*.7,y:HEIGHT*.25},{x:WIDTH*.7,y:HEIGHT*.75},{x:WIDTH*.9,y:HEIGHT*.75},{x:WIDTH,y:HEIGHT*.4}];}else if(k==='desert'){path=[{x:0,y:HEIGHT*.4},{x:WIDTH*.2,y:HEIGHT*.4},{x:WIDTH*.35,y:HEIGHT*.2},{x:WIDTH*.55,y:HEIGHT*.2},{x:WIDTH*.7,y:HEIGHT*.45},{x:WIDTH*.55,y:HEIGHT*.7},{x:WIDTH*.3,y:HEIGHT*.7},{x:WIDTH*.3,y:HEIGHT*.9},{x:WIDTH*.8,y:HEIGHT*.9},{x:WIDTH,y:HEIGHT*.6}];}else if(k==='ice'){path=[{x:0,y:HEIGHT*.5},{x:WIDTH*.15,y:HEIGHT*.3},{x:WIDTH*.3,y:HEIGHT*.5},{x:WIDTH*.45,y:HEIGHT*.3},{x:WIDTH*.6,y:HEIGHT*.5},{x:WIDTH*.75,y:HEIGHT*.3},{x:WIDTH*.9,y:HEIGHT*.5},{x:WIDTH,y:HEIGHT*.7}];}}
+class Enemy{constructor(t,extra=0,wv=1){const type=ENEMY_TYPES[t],mapDiff=MAPS[currentMapKey].difficulty,healthScale=1+(wv-1)*.05,speedScale=1+(wv-1)*.02;this.typeName=t;this.shape=type.shape;this.radius=t==="boss"?22:12;this.speed=type.speed*speedScale*mapDiff;this.maxHealth=(type.health+extra)*healthScale*mapDiff;this.health=this.maxHealth;this.reward=type.reward;this.color=type.color;this.pathIndex=0;this.x=path[0].x;this.y=path[0].y;this.reachedEnd=false;}
+update(){if(this.pathIndex>=path.length-1){this.reachedEnd=true;return;}const target=path[this.pathIndex+1],dx=target.x-this.x,dy=target.y-this.y,dist=Math.sqrt(dx*dx+dy*dy),step=this.speed*speedMultiplier;if(dist<step){this.x=target.x;this.y=target.y;this.pathIndex++;}else{this.x+=(dx/dist)*step;this.y+=(dy/dist)*step;}}
+drawShape(){ctx.fillStyle=this.color;const r=this.radius,x=this.x,y=this.y;switch(this.shape){case"triangle":ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x-r,y+r);ctx.lineTo(x+r,y+r);ctx.closePath();ctx.fill();break;case"square":ctx.fillRect(x-r,y-r,2*r,2*r);break;case"diamond":ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x-r,y);ctx.lineTo(x,y+r);ctx.lineTo(x+r,y);ctx.closePath();ctx.fill();break;case"hex":ctx.beginPath();for(let i=0;i<6;i++){const a=Math.PI/3*i+Math.PI/6;ctx.lineTo(x+Math.cos(a)*r,y+Math.sin(a)*r);}ctx.closePath();ctx.fill();break;case"oct":ctx.beginPath();for(let i=0;i<8;i++){const a=Math.PI/4*i+Math.PI/8;ctx.lineTo(x+Math.cos(a)*r,y+Math.sin(a)*r);}ctx.closePath();ctx.fill();break;default:ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}}
+draw(){const ratio=this.health/this.maxHealth;ctx.fillStyle="rgba(0,0,0,0.6)";ctx.fillRect(this.x-18,this.y-(this.radius+12),36,7);ctx.fillStyle="#ff5555";ctx.fillRect(this.x-18,this.y-(this.radius+12),36*ratio,7);this.drawShape();}}
+class Tower{constructor(x,y,t){const s=getTowerStats(t);this.typeName=t;this.x=x;this.y=y;this.range=s.range;this.fireRate=s.fireRate;this.damage=s.damage;this.bulletSpeed=s.speed;this.color=s.color;this.cooldown=0;}
+update(){if(this.cooldown>0){this.cooldown-=speedMultiplier;return;}let target=null,closest=Infinity;for(const e of enemies){const dx=e.x-this.x,dy=e.y-this.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<this.range&&dist<closest){closest=dist;target=e;}}if(target){bullets.push(new Bullet(this.x,this.y,target,this.damage,this.bulletSpeed));this.cooldown=this.fireRate;}}
+draw(){ctx.fillStyle=this.color;ctx.fillRect(this.x-12,this.y-12,24,24);ctx.strokeStyle="#000";ctx.lineWidth=3;ctx.strokeRect(this.x-12,this.y-12,24,24);ctx.fillStyle="rgba(255,255,255,0.25)";ctx.fillRect(this.x-12,this.y-12,10,10);ctx.fillStyle="rgba(0,0,0,0.25)";ctx.fillRect(this.x+2,this.y+2,10,10);ctx.strokeStyle=this.color+"55";ctx.lineWidth=1;ctx.beginPath();ctx.arc(this.x,this.y,this.range,0,Math.PI*2);ctx.stroke();}}
+class Bullet{constructor(x,y,target,damage,speed){this.x=x;this.y=y;this.target=target;this.damage=damage;this.speed=speed;this.radius=3;this.active=true;}
+update(){if(!this.target||!enemies.includes(this.target)){this.active=false;return;}const dx=this.target.x-this.x,dy=this.target.y-this.y,dist=Math.sqrt(dx*dx+dy*dy),step=this.speed*speedMultiplier;if(dist<step){this.target.health-=this.damage;this.active=false;if(this.target.health<=0){money+=this.target.reward;enemies.splice(enemies.indexOf(this.target),1);moneyEl.textContent="Money: "+Math.floor(money);}}else{this.x+=(dx/dist)*step;this.y+=(dy/dist)*step;}}
+draw(){ctx.fillStyle="#fdfdfd";ctx.beginPath();ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);ctx.fill();}}
+function hideAllScreens(){homeScreen.style.display='none';mapScreen.style.display='none';upgradeScreen.style.display='none';gameScreen.style.display='none';}
+function updateMetaDisplays(){metaCurrencyDisplay.textContent="$"+metaCurrency;metaCurrencyDisplay2.textContent="$"+metaCurrency;}
+function goHome(){hideAllScreens();updateMetaDisplays();homeScreen.style.display='block';}
+function goToMapSelect(){hideAllScreens();mapScreen.style.display='block';}
+function goToUpgrades(){hideAllScreens();renderUpgradeMenu();upgradeScreen.style.display='block';}
+function startGameOnMap(k){currentMapKey=k;resetRunState();createPathForMap(k);hideAllScreens();gameScreen.style.display='block';}
+function endRunToMenu(){enemies=[];bullets=[];towers=[];gameOver=false;waveInProgress=false;paused=false;speedMultiplier=1;autoWave=false;speedBtn.textContent="Speed: 1x";autoWaveBtn.textContent="Auto: Off";goHome();}
+function showInfoAlert(){alert("How to Play:\n\n- Choose a map from Play.\n- Click a tower button, then click on the map to place it.\n- Press Start Wave to send enemies.\n- Use Auto to keep waves going.\n- Use Speed and Pause to control pace.\n- Every 50 waves grants $100 upgrade currency.\n- Spend upgrade currency in Upgrades to permanently boost towers.");}
+function renderUpgradeMenu(){upgradeListEl.innerHTML="";for(const n in BASE_TOWER_TYPES){const base=BASE_TOWER_TYPES[n],lvl=getTowerLevel(n),cur=getTowerStats(n),next=getTowerStatsNext(n),card=document.createElement('div');card.className='upgrade-card';const header=document.createElement('div');header.className='upgrade-header';const nameEl=document.createElement('div');nameEl.className='upgrade-name';nameEl.textContent=n;const levelEl=document.createElement('div');levelEl.className='upgrade-level';levelEl.textContent="Level "+lvl+" / "+MAX_UPGRADE_LEVEL;header.appendChild(nameEl);header.appendChild(levelEl);const stats=document.createElement('div');stats.className='upgrade-stats';stats.innerHTML="<div><b>Current</b> — Dmg: "+cur.damage.toFixed(1)+", Range: "+cur.range.toFixed(1)+", FireRate: "+cur.fireRate.toFixed(1)+"</div><div><b>After Upgrade</b> — Dmg: "+next.damage.toFixed(1)+", Range: "+next.range.toFixed(1)+", FireRate: "+next.fireRate.toFixed(1)+"</div>";const costEl=document.createElement('div');costEl.className='upgrade-cost';costEl.textContent="Cost: $"+UPGRADE_COST+" upgrade currency";const btn=document.createElement('button');btn.className='upgrade-btn';btn.textContent=lvl>=MAX_UPGRADE_LEVEL?"Max Level":"Upgrade";if(lvl>=MAX_UPGRADE_LEVEL||metaCurrency<UPGRADE_COST)btn.classList.add('disabled');btn.onclick=()=>{if(lvl>=MAX_UPGRADE_LEVEL||metaCurrency<UPGRADE_COST)return;metaCurrency-=UPGRADE_COST;towerUpgradeLevels[n]=lvl+1;updateMetaDisplays();renderUpgradeMenu();};card.appendChild(header);card.appendChild(stats);card.appendChild(costEl);card.appendChild(btn);upgradeListEl.appendChild(card);}}
+function selectTower(t){selectedTowerType=t;selectedTowerLabel.textContent=t;}
+startWaveBtn.addEventListener('click',()=>{spawnWave();});
+pauseBtn.addEventListener('click',()=>{paused=!paused;pauseBtn.textContent=paused?"Resume":"Pause";});
+speedBtn.addEventListener('click',()=>{speedMultiplier++;if(speedMultiplier>3)speedMultiplier=1;speedBtn.textContent="Speed: "+speedMultiplier+"x";});
+autoWaveBtn.addEventListener('click',()=>{autoWave=!autoWave;autoWaveBtn.textContent=autoWave?"Auto: On":"Auto: Off";});
+canvas.addEventListener('click',e=>{if(gameOver)return;const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,stats=getTowerStats(selectedTowerType),cost=stats.cost;if(money>=cost){towers.push(new Tower(x,y,selectedTowerType));money-=cost;moneyEl.textContent="Money: "+Math.floor(money);}});
+function spawnWave(){if(waveInProgress||gameOver)return;waveInProgress=true;const isBossWave=(wave%15===0);let spawned=0,totalToSpawn=isBossWave?1:10+wave*2;const enemyPool=Object.keys(ENEMY_TYPES).filter(t=>t!=="boss");const interval=setInterval(()=>{if(spawned>=totalToSpawn||gameOver){clearInterval(interval);waveInProgress=false;wave++;wavesCompletedThisRun++;waveEl.textContent="Wave: "+wave;if(wavesCompletedThisRun>=50){wavesCompletedThisRun-=50;metaCurrency+=100;updateMetaDisplays();alert("You completed 50 waves! You earned $100 upgrade currency.");}if(autoWave&&!gameOver)spawnWave();return;}if(isBossWave){const extra=wave*40;enemies.push(new Enemy("boss",extra,wave));}else{const type=enemyPool[Math.floor(Math.random()*enemyPool.length)],extra=Math.floor(wave*5);enemies.push(new Enemy(type,extra,wave));}spawned++;},isBossWave?1000:550);}
+function drawPath(){ctx.lineCap="round";ctx.lineWidth=26;ctx.strokeStyle="#1a2b1a";if(currentMapKey==='desert')ctx.strokeStyle="#5a3b1a";if(currentMapKey==='ice')ctx.strokeStyle="#1a2b5a";ctx.beginPath();ctx.moveTo(path[0].x,path[0].y);for(let i=1;i<path.length;i++)ctx.lineTo(path[i].x,path[i].y);ctx.stroke();ctx.lineWidth=18;ctx.strokeStyle="#3f6f3f";if(currentMapKey==='desert')ctx.strokeStyle="#c89b4a";if(currentMapKey==='ice')ctx.strokeStyle="#7fb3ff";ctx.beginPath();ctx.moveTo(path[0].x,path[0].y);for(let i=1;i<path.length;i++)ctx.lineTo(path[i].x,path[i].y);ctx.stroke();}
+function updateGame(){if(gameOver)return;for(const e of enemies)e.update();for(let i=enemies.length-1;i>=0;i--){if(enemies[i].reachedEnd){const lost=enemies[i].typeName==="boss"?5:1;lives-=lost;enemies.splice(i,1);livesEl.textContent="Lives: "+lives;if(lives<=0){gameOver=true;}}}for(const t of towers)t.update();for(const b of bullets)b.update();bullets=bullets.filter(b=>b.active);}
+function drawBackground(){if(currentMapKey==='forest'){ctx.fillStyle="#10161f";ctx.fillRect(0,0,WIDTH,HEIGHT);}else if(currentMapKey==='desert'){ctx.fillStyle="#2b2115";ctx.fillRect(0,0,WIDTH,HEIGHT);const g=ctx.createLinearGradient(0,0,0,HEIGHT);g.addColorStop(0,"#5a3b1a");g.addColorStop(1,"#c89b4a33");ctx.fillStyle=g;ctx.fillRect(0,0,WIDTH,HEIGHT);}else if(currentMapKey==='ice'){ctx.fillStyle="#0b1220";ctx.fillRect(0,0,WIDTH,HEIGHT);const g=ctx.createRadialGradient(WIDTH*.3,HEIGHT*.2,0,WIDTH*.3,HEIGHT*.2,WIDTH);g.addColorStop(0,"#7fb3ff33");g.addColorStop(1,"#0b1220");ctx.fillStyle=g;ctx.fillRect(0,0,WIDTH,HEIGHT);}else{ctx.fillStyle="#10131a";ctx.fillRect(0,0,WIDTH,HEIGHT);}}
+function drawGame(){ctx.clearRect(0,0,WIDTH,HEIGHT);drawBackground();if(path.length>0)drawPath();for(const e of enemies)e.draw();for(const t of towers)t.draw();for(const b of bullets)b.draw();if(gameOver){ctx.fillStyle="rgba(0,0,0,0.75)";ctx.fillRect(0,0,WIDTH,HEIGHT);ctx.fillStyle="#fff";ctx.font="40px system-ui";ctx.textAlign="center";ctx.fillText("GAME OVER",WIDTH/2,HEIGHT/2);}}
+function gameLoop(){if(!paused)updateGame();drawGame();requestAnimationFrame(gameLoop);}
+function resetRunState(){lives=20;money=150;wave=1;enemies=[];towers=[];bullets=[];gameOver=false;waveInProgress=false;paused=false;speedMultiplier=1;autoWave=false;wavesCompletedThisRun=0;speedBtn.textContent="Speed: 1x";autoWaveBtn.textContent="Auto: Off";livesEl.textContent="Lives: "+lives;moneyEl.textContent="Money: "+money;waveEl.textContent="Wave: "+wave;}
+goHome();gameLoop();
+</script></body></html>
