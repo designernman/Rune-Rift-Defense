@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rune Rift Defense – Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root{
+      --accent:#4cafef;
+      --accent-soft:#4cafef33;
+      --bg:#05060a;
+      --panel:#11141d;
+      --border:#262c3a;
+      --text:#f5f7fb;
+      --muted:#8f98aa;
+      --danger:#ff4b6a;
+      --success:#4caf50;
+    }
+    *{box-sizing:border-box;}
+    html,body{
+      margin:0;
+      padding:0;
+      height:100%;
+      background:radial-gradient(circle at 20% 20%,#303540 0,#05060a 45%,#020308 80%);
+      color:var(--text);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      overflow:hidden;
+    }
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    #app{
+      width:100%;
+      max-width:1100px;
+      height:100vh;
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .screen{
+      display:none;
+      width:100%;
+      height:100%;
+      max-width:900px;
+      max-height:600px;
+      background:var(--panel);
+      border-radius:14px;
+      border:1px solid var(--border);
+      box-shadow:0 14px 40px rgba(0,0,0,.8);
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .screen.active{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+    }
+
+    #homeScreen{
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:16px;
+    }
+    .game-title{
+      font-size:36px;
+      letter-spacing:2px;
+      text-shadow:0 0 18px #4cafef66;
+      margin-bottom:4px;
+    }
+    .game-sub{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+    .menu-buttons{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      width:220px;
+      margin-top:8px;
+    }
+    .menu-btn{
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#151a25;
+      color:var(--text);
+      font-size:14px;
+      cursor:pointer;
+      transition:background .15s,border-color .15s,transform .05s,box-shadow .15s;
+    }
+    .menu-btn:hover{
+      background:#1b2230;
+      border-color:var(--accent-soft);
+      box-shadow:0 0 0 1px var(--accent-soft);
+    }
+    .menu-btn:active{
+      transform:translateY(1px);
+    }
+
+    .top-nav{
+      width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      margin-bottom:10px;
+    }
+    .top-nav-title{
+      font-size:26px;
+      text-shadow:0 0 14px #4cafef66;
+      margin-bottom:6px;
+    }
+    .top-nav-buttons{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+    .nav-btn{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#151a25;
+      color:var(--text);
+      font-size:12px;
+      cursor:pointer;
+      transition:background .15s,border-color .15s,transform .05s;
+    }
+    .nav-btn.active{
+      border-color:var(--accent-soft);
+      background:#1b2230;
+      box-shadow:0 0 0 1px var(--accent-soft);
+    }
+    .nav-btn:hover{
+      background:#1b2230;
+    }
+    .nav-btn:active{
+      transform:translateY(1px);
+    }
+
+    #mapScreen{
+      align-items:center;
+      justify-content:flex-start;
+    }
+    .map-list{
+      margin-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      width:100%;
+      max-width:420px;
+    }
+    .map-btn{
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#181d29;
+      color:var(--text);
+      font-size:13px;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      transition:background .15s,border-color .15s,transform .05s;
+    }
+    .map-btn span{
+      font-size:11px;
+      color:var(--muted);
+    }
+    .map-btn:hover{
+      background:#1d2433;
+      border-color:var(--accent-soft);
+    }
+    .map-btn:active{
+      transform:translateY(1px);
+    }
+    .map-btn.selected{
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px var(--accent-soft);
+    }
+    .map-actions{
+      margin-top:12px;
+      display:flex;
+      gap:8px;
+      justify-content:center;
+    }
+    .primary-btn{
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid var(--accent-soft);
+      background:#182132;
+      color:var(--text);
+      font-size:13px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      transition:background .15s,box-shadow .15s,transform .05s;
+    }
+    .primary-btn:hover{
+      background:#1f2a3d;
+      box-shadow:0 0 0 1px var(--accent-soft),0 0 14px rgba(0,0,0,.8);
+    }
+    .primary-btn:active{
+      transform:translateY(1px);
+    }
+    .ghost-btn{
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#151a25;
+      color:var(--text);
+      font-size:13px;
+      cursor:pointer;
+    }
+
+    .content-scroll{
+      flex:1;
+      width:100%;
+      max-width:700px;
+      margin-top:6px;
+      padding:10px;
+      border-radius:10px;
+      background:#151a25;
+      border:1px solid var(--border);
+      overflow-y:auto;
+    }
+    h2.section-title{
+      margin:0 0 6px;
+      font-size:16px;
+    }
+    p{
+      margin:4px 0;
+      font-size:13px;
+      color:var(--muted);
+    }
+    ul.info-list{
+      margin:4px 0 0;
+      padding-left:18px;
+      font-size:13px;
+      color:var(--muted);
+    }
+    ul.info-list li{
+      margin:2px 0;
+    }
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+      gap:8px;
+      margin-top:6px;
+    }
+    .stat-card{
+      background:#181d29;
+      border-radius:10px;
+      border:1px solid #262c3a;
+      padding:8px 10px;
+      font-size:12px;
+    }
+    .stat-label{color:var(--muted);font-size:11px;}
+    .stat-value{font-size:15px;font-weight:600;margin-top:2px;}
+
+    #gameScreen{
+      padding:10px;
+    }
+    #gameContainer{
+      width:100%;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+    }
+    .hud{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:13px;
+      margin-bottom:6px;
+    }
+    .hud-left,.hud-right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .hud-label{
+      font-weight:700;
+    }
+    .hud-label span{
+      font-weight:400;
+      margin-left:4px;
+    }
+    .hud-btn{
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#181d29;
+      color:var(--text);
+      font-size:11px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:4px;
+      transition:background .15s,border-color .15s,transform .05s;
+    }
+    .hud-btn:hover{
+      background:#1d2433;
+      border-color:var(--accent-soft);
+    }
+    .hud-btn:active{
+      transform:translateY(1px);
+    }
+
+    .game-layout{
+      flex:1;
+      display:flex;
+      position:relative;
+      gap:0;
+      min-height:0;
+    }
+    .map-frame{
+      flex:1;
+      position:relative;
+      background:#05070d;
+      border-radius:12px;
+      border:2px solid #2b3242;
+      box-shadow:0 12px 30px rgba(0,0,0,.9);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    canvas{
+      background:#000;
+      border-radius:10px;
+      max-width:100%;
+      max-height:100%;
+    }
+    .fullscreen-btn{
+      position:absolute;
+      top:6px;
+      left:6px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#151a25cc;
+      color:var(--text);
+      font-size:11px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:4px;
+      backdrop-filter:blur(4px);
+      z-index:5;
+    }
+    .fullscreen-btn:hover{
+      background:#1d2433;
+      border-color:var(--accent-soft);
+    }
+
+    .tower-panel-wrapper{
+      position:relative;
+      width:0;
+      overflow:visible;
+    }
+    .tower-panel{
+      position:absolute;
+      top:0;
+      right:0;
+      width:220px;
+      height:100%;
+      background:#151a25;
+      border-left:1px solid var(--border);
+      box-shadow:-8px 0 20px rgba(0,0,0,.7);
+      padding:8px;
+      display:flex;
+      flex-direction:column;
+      transform:translateX(100%);
+      transition:transform .2s ease-out;
+    }
+    .tower-panel.collapsed{
+      transform:translateX(100%);
+    }
+    .tower-panel.open{
+      transform:translateX(0);
+    }
+    .tower-toggle{
+      position:absolute;
+      top:10px;
+      left:-70px;
+      padding:4px 8px;
+      border-radius:999px 0 0 999px;
+      border:1px solid var(--border);
+      background:#151a25;
+      color:var(--text);
+      font-size:11px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:4px;
+      box-shadow:-4px 0 10px rgba(0,0,0,.6);
+    }
+    .tower-panel h3{
+      margin:0 0 4px;
+      font-size:14px;
+    }
+    .tower-panel p{
+      font-size:11px;
+      color:var(--muted);
+      margin:2px 0 4px;
+    }
+    .tower-list{
+      flex:1;
+      overflow-y:auto;
+      padding-right:4px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .tower-btn{
+      padding:4px 6px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:#181d29;
+      color:var(--text);
+      font-size:11px;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      transition:background .15s,border-color .15s,transform .05s;
+    }
+    .tower-btn span{
+      font-size:10px;
+      color:var(--muted);
+    }
+    .tower-btn:hover{
+      background:#1d2433;
+      border-color:var(--accent-soft);
+    }
+    .tower-btn:active{
+      transform:translateY(1px);
+    }
+    .tower-btn.selected{
+      border-color:var(--accent);
+      background:#1b2230;
+    }
+    .tower-info{
+      font-size:11px;
+      color:var(--muted);
+      border-top:1px solid #262c3a;
+      padding-top:4px;
+    }
+
+    .tower-upgrade-panel{
+      position:absolute;
+      bottom:8px;
+      left:50%;
+      transform:translateX(-50%);
+      background:#151a25f0;
+      border-radius:10px;
+      border:1px solid var(--border);
+      padding:6px 8px;
+      font-size:11px;
+      color:var(--text);
+      display:none;
+      min-width:180px;
+      z-index:20;
+    }
+    .tower-upgrade-panel.visible{
+      display:block;
+    }
+    .tower-upgrade-panel h4{
+      margin:0 0 4px;
+      font-size:12px;
+    }
+    .tower-upgrade-panel p{
+      margin:2px 0;
+      font-size:11px;
+      color:var(--muted);
+    }
+    .tower-upgrade-btn{
+      margin-top:4px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--accent-soft);
+      background:#182132;
+      color:var(--text);
+      font-size:11px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+    }
+    .tower-upgrade-btn:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+    }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      background:#000000aa;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:30;
+      display:none;
+    }
+    .overlay.visible{
+      display:flex;
+    }
+    .popup{
+      background:#151a25;
+      border-radius:12px;
+      border:1px solid var(--border);
+      padding:14px 16px;
+      text-align:center;
+      max-width:260px;
+      box-shadow:0 12px 30px rgba(0,0,0,.9);
+    }
+    .popup h3{
+      margin:0 0 6px;
+      font-size:16px;
+    }
+    .popup p{
+      margin:4px 0;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .popup-btn{
+      margin-top:8px;
+      padding:6px 12px;
+      border-radius:999px;
+      border:1px solid var(--accent-soft);
+      background:#182132;
+      color:var(--text);
+      font-size:13px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    ::-webkit-scrollbar{width:6px;}
+    ::-webkit-scrollbar-track{background:#0b0f18;}
+    ::-webkit-scrollbar-thumb{background:#2b3242;border-radius:3px;}
+  </style>
+</head>
+<body>
+<div id="app">
+  <div id="homeScreen" class="screen active">
+    <div>
+      <div class="game-title">Rune Rift Defense</div>
+      <div class="game-sub">A solo‑developed tower defense game with rune‑powered enemies and global upgrades.</div>
+      <div class="menu-buttons">
+        <button class="menu-btn" data-go="map">Play</button>
+        <button class="menu-btn" data-go="stats">Stats</button>
+        <button class="menu-btn" data-go="upgrades">Upgrades</button>
+        <button class="menu-btn" data-go="about">About</button>
+        <button class="menu-btn" data-go="help">Help</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="mapScreen" class="screen">
+    <div class="top-nav">
+      <div class="top-nav-title">Rune Rift Defense</div>
+      <div class="top-nav-buttons">
+        <button class="nav-btn" data-go="home">Home</button>
+        <button class="nav-btn active">Play</button>
+        <button class="nav-btn" data-go="stats">Stats</button>
+        <button class="nav-btn" data-go="upgrades">Upgrades</button>
+        <button class="nav-btn" data-go="about">About</button>
+        <button class="nav-btn" data-go="help">Help</button>
+      </div>
+    </div>
+    <div style="margin-top:6px;text-align:center;">
+      <h2 class="section-title">Select a Map</h2>
+      <p>Choose where you want to defend the rift.</p>
+    </div>
+    <div class="map-list">
+      <button class="map-btn" data-map="forest">
+        <div>Forest Trail<br><span>Medium • Curved dirt path through trees, logs, and stones.</span></div>
+        <div>🌲</div>
+      </button>
+      <button class="map-btn" data-map="desert">
+        <div>Desert Canyon<br><span>Medium • Sand dunes, ruins, and rocky choke points.</span></div>
+        <div>🏜️</div>
+      </button>
+      <button class="map-btn" data-map="frozen">
+        <div>Frozen Valley<br><span>Hard • Icy paths, snow drifts, and tight angles.</span></div>
+        <div>❄️</div>
+      </button>
+    </div>
+    <div class="map-actions">
+      <button class="primary-btn" id="startGameBtn">▶️ Start</button>
+      <button class="ghost-btn" data-go="home">⬅️ Back</button>
+    </div>
+  </div>
+
+  <div id="gameScreen" class="screen">
+    <div class="top-nav">
+      <div class="top-nav-title">Rune Rift Defense</div>
+      <div class="top-nav-buttons">
+        <button class="nav-btn" data-go="home">Home</button>
+        <button class="nav-btn active">Play</button>
+        <button class="nav-btn" data-go="stats">Stats</button>
+        <button class="nav-btn" data-go="upgrades">Upgrades</button>
+        <button class="nav-btn" data-go="about">About</button>
+        <button class="nav-btn" data-go="help">Help</button>
+      </div>
+    </div>
+    <div id="gameContainer">
+      <div class="hud">
+        <div class="hud-left">
+          <div class="hud-label">❤️ Lives:<span id="hudLives">20</span></div>
+          <div class="hud-label">💵 Money:<span id="hudMoney">150</span></div>
+          <div class="hud-label">Wave:<span id="hudWave">1</span></div>
+        </div>
+        <div class="hud-right">
+          <button class="hud-btn" id="startWaveBtn">▶️ Start Wave</button>
+          <button class="hud-btn" id="autoWaveBtn">🔁 Auto Off</button>
+          <button class="hud-btn" id="pauseBtn">⏸️ Pause</button>
+          <button class="hud-btn" id="speedBtn">⏩ x1</button>
+          <button class="hud-btn" id="backToMenuBtn">⬅️ Menu</button>
+        </div>
+      </div>
+      <div class="game-layout">
+        <div class="map-frame">
+          <button class="fullscreen-btn" id="fullscreenBtn">⛶ Fullscreen</button>
+          <canvas id="gameCanvas" width="640" height="360"></canvas>
+          <div class="tower-upgrade-panel" id="towerUpgradePanel">
+            <h4 id="towerUpgradeTitle">Tower</h4>
+            <p id="towerUpgradeStats">Damage, range, fire rate</p>
+            <p id="towerUpgradeLevel">Level: 1 / 8</p>
+            <p id="towerUpgradeCost">Upgrade Cost: $0</p>
+            <button class="tower-upgrade-btn" id="towerUpgradeButton">Upgrade</button>
+          </div>
+          <div class="overlay" id="gameOverOverlay">
+            <div class="popup">
+              <h3>💔 You ran out of lives!</h3>
+              <p>The rift has fallen. Try a new strategy.</p>
+              <button class="popup-btn" id="leaveGameBtn">⬅️ Leave</button>
+            </div>
+          </div>
+        </div>
+        <div class="tower-panel-wrapper">
+          <div class="tower-panel collapsed" id="towerPanel">
+            <button class="tower-toggle" id="towerToggleBtn">Towers ⮝</button>
+            <h3>Towers</h3>
+            <p>Select a tower, then click on the map to place it. Ghost color shows if it’s valid.</p>
+            <div class="tower-list" id="towerList"></div>
+            <div class="tower-info" id="towerInfo">Select a tower to see details.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="statsScreen" class="screen">
+    <div class="top-nav">
+      <div class="top-nav-title">Rune Rift Defense</div>
+      <div class="top-nav-buttons">
+        <button class="nav-btn" data-go="home">Home</button>
+        <button class="nav-btn" data-go="map">Play</button>
+        <button class="nav-btn active">Stats</button>
+        <button class="nav-btn" data-go="upgrades">Upgrades</button>
+        <button class="nav-btn" data-go="about">About</button>
+        <button class="nav-btn" data-go="help">Help</button>
+      </div>
+    </div>
+    <div class="content-scroll">
+      <h2 class="section-title">Stats</h2>
+      <p>Lifetime and map stats for this device. Saved locally in your browser.</p>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Waves Survived</div>
+          <div class="stat-value" id="statTotalWaves">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Enemies Defeated</div>
+          <div class="stat-value" id="statTotalEnemies">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Bosses Defeated</div>
+          <div class="stat-value" id="statTotalBosses">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Upgrade Currency Earned</div>
+          <div class="stat-value" id="statUpgradeCurrency">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Runs Played</div>
+          <div class="stat-value" id="statRunsPlayed">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Highest Wave Reached</div>
+          <div class="stat-value" id="statHighestWave">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Best Wave – Forest</div>
+          <div class="stat-value" id="statBestForest">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Best Wave – Desert</div>
+          <div class="stat-value" id="statBestDesert">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Best Wave – Frozen</div>
+          <div class="stat-value" id="statBestFrozen">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Global Upgrades Purchased</div>
+          <div class="stat-value" id="statGlobalUpgrades">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Upgrade Currency Spent</div>
+          <div class="stat-value" id="statUpgradeSpent">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="upgradesScreen" class="screen">
+    <div class="top-nav">
+      <div class="top-nav-title">Rune Rift Defense</div>
+      <div class="top-nav-buttons">
+        <button class="nav-btn" data-go="home">Home</button>
+        <button class="nav-btn" data-go="map">Play</button>
+        <button class="nav-btn" data-go="stats">Stats</button>
+        <button class="nav-btn active">Upgrades</button>
+        <button class="nav-btn" data-go="about">About</button>
+        <button class="nav-btn" data-go="help">Help</button>
+      </div>
+    </div>
+    <div class="content-scroll">
+      <h2 class="section-title">Global Upgrades</h2>
+      <p>Spend ⭐ upgrade currency to permanently boost tower stats across all runs.</p>
+      <p><b>Upgrade Currency:</b> <span id="metaCurrency">0</span></p>
+      <div class="stats-grid" id="upgradeGrid"></div>
+      <p style="margin-top:8px;">
+        Global upgrades cost <b>2.5×</b> more than base and give a <b>2×</b> stat boost per level.
+        Survive 50 waves to earn <b>$150</b> upgrade currency.
+      </p>
+    </div>
+  </div>
+
+  <div id="aboutScreen" class="screen">
+    <div class="top-nav">
+      <div class="top-nav-title">Rune Rift Defense</div>
+      <div class="top-nav-buttons">
+        <button class="nav-btn" data-go="home">Home</button>
+        <button class="nav-btn" data-go="map">Play</button>
+        <button class="nav-btn" data-go="stats">Stats</button>
+        <button class="nav-btn" data-go="upgrades">Upgrades</button>
+        <button class="nav-btn active">About</button>
+        <button class="nav-btn" data-go="help">Help</button>
+      </div>
+    </div>
+    <div class="content-scroll">
+      <h2 class="section-title">About Rune Rift Defense</h2>
+      <p>
+        <b>Rune Rift Defense</b> is a solo‑developed tower defense game where you defend unstable rift paths
+        using towers, global upgrades, and rune‑powered enemies.
+      </p>
+      <p>
+        The game is built to feel like a classic lane‑based tower defense, but with a focus on
+        long‑term progression through upgrade currency and global buffs.
+      </p>
+      <p>
+        This project is created by an individual developer. If you have feedback, ideas, or bug reports,
+        you can reach out at: <b>atbankson@gmail.com</b>.
+      </p>
+      <h3 style="font-size:14px;margin-top:10px;">Version Info</h3>
+      <ul class="info-list">
+        <li><b>Current Version:</b> v0.2 – Rune Enemies & Map Polish</li>
+        <li><b>Core Features:</b> 3 maps, rune enemy types, global upgrades, in‑match upgrades, boss waves, Wooden Money Hut, stats, and weekly update plan.</li>
+        <li><b>Focus:</b> Iterating on balance, readability, and progression pacing.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="helpScreen" class="screen">
+    <div class="top-nav">
+      <div class="top-nav-title">Rune Rift Defense</div>
+      <div class="top-nav-buttons">
+        <button class="nav-btn" data-go="home">Home</button>
+        <button class="nav-btn" data-go="map">Play</button>
+        <button class="nav-btn" data-go="stats">Stats</button>
+        <button class="nav-btn" data-go="upgrades">Upgrades</button>
+        <button class="nav-btn" data-go="about">About</button>
+        <button class="nav-btn active">Help</button>
+      </div>
+    </div>
+    <div class="content-scroll">
+      <h2 class="section-title">How to Play</h2>
+      <p>Quick overview of how Rune Rift Defense works, including enemies, towers, currencies, and controls.</p>
+
+      <h3 style="font-size:14px;margin-top:6px;">Basic Flow</h3>
+      <ul class="info-list">
+        <li>From the Home screen, click <b>Play</b>, choose a map, then press <b>Start</b>.</li>
+        <li>In the game, open the <b>Towers</b> panel on the right, select a tower, then click on the map to place it.</li>
+        <li>Press <b>Start Wave</b> to begin a wave. Turn on <b>Auto</b> to automatically start new waves.</li>
+        <li>Use <b>Pause</b> and <b>Speed</b> to control the pace of the game.</li>
+        <li>Use the <b>Fullscreen</b> button in the top‑left of the map for an immersive view.</li>
+      </ul>
+
+      <h3 style="font-size:14px;margin-top:6px;">Currencies</h3>
+      <ul class="info-list">
+        <li><b>💵 In‑Map Currency (Money):</b> Earned by defeating enemies during a run. Used to place towers, upgrade towers (up to 8 times each), and buy/upgrade the Wooden Money Hut.</li>
+        <li><b>⭐ Upgrade Currency (Meta Currency):</b> Earned by surviving 50 waves (currently $150 per 50 waves). Used outside the match to buy permanent global upgrades that boost tower stats across all runs.</li>
+      </ul>
+
+      <h3 style="font-size:14px;margin-top:6px;">Enemy Types (Rune Shapes)</h3>
+      <ul class="info-list">
+        <li><b>Circle – Basic Rune:</b> Normal HP, normal speed. Soft blue glow.</li>
+        <li><b>Triangle – Swift Rune:</b> Low HP, high speed. Teal glow with sharper edges.</li>
+        <li><b>Square – Bulwark Rune:</b> High HP, slow speed. Heavy orange glow.</li>
+        <li><b>Diamond – Rift Boss:</b> Very high HP, slow but dangerous. Pulsing purple rune aura.</li>
+      </ul>
+
+      <h3 style="font-size:14px;margin-top:6px;">Tower Shapes</h3>
+      <ul class="info-list">
+        <li><b>Dart:</b> Circle tower.</li>
+        <li><b>Cannon:</b> Square tower.</li>
+        <li><b>Sniper:</b> Triangle tower.</li>
+        <li><b>Flamethrower:</b> Rectangle tower.</li>
+        <li><b>Railgun:</b> Diamond tower.</li>
+        <li><b>Wooden Money Hut:</b> Hut‑shaped income tower.</li>
+      </ul>
+
+      <h3 style="font-size:14px;margin-top:6px;">Global Upgrades</h3>
+      <ul class="info-list">
+        <li>Global upgrades cost <b>2.5×</b> more than the base design.</li>
+        <li>Each global upgrade level gives a <b>2× stat boost</b> (damage, range, fire rate, etc.).</li>
+        <li>Global upgrades apply to all runs and stack multiplicatively.</li>
+        <li>Access them from the <b>Upgrades</b> tab on the top bar.</li>
+      </ul>
+
+      <h3 style="font-size:14px;margin-top:6px;">In‑Match Tower Upgrades</h3>
+      <ul class="info-list">
+        <li>Click a placed tower to open its upgrade panel at the bottom of the map.</li>
+        <li>Each tower can be upgraded up to <b>8 times</b> during a run.</li>
+        <li>Each upgrade increases stats and costs more than the last.</li>
+        <li>These upgrades reset every game and stack on top of global upgrades.</li>
+      </ul>
+
+      <h3 style="font-size:14px;margin-top:6px;">Wooden Money Hut (Bank Tower)</h3>
+      <ul class="info-list">
+        <li>Costs $300 to place.</li>
+        <li>Generates $100 at the end of every wave per level.</li>
+        <li>Can be upgraded only inside the match (up to level 5), increasing income by +100 per level.</li>
+        <li>Must be repurchased every game and is not affected by global upgrades.</li>
+      </ul>
+
+      <h3 style="font-size:14px;margin-top:6px;">Placement & Ghost Colors</h3>
+      <ul class="info-list">
+        <li>When placing a tower, a ghost appears where your cursor is.</li>
+        <li><b>Green ghost:</b> Valid placement and you have enough money.</li>
+        <li><b>Red ghost:</b> Invalid placement or not enough money.</li>
+        <li>You can’t place towers too close to the path, on obstacles, or on top of other towers.</li>
+      </ul>
+
+      <h3 style="font-size:14px;margin-top:6px;">Collapsible Tower Panel</h3>
+      <ul class="info-list">
+        <li>The tower panel is on the right side of the game screen.</li>
+        <li>Use the <b>Towers ⮝ / Towers ⮟</b> button to open or collapse it.</li>
+        <li>When collapsed, you get more map space; when open, you can pick towers easily.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const screens = {
+  home: document.getElementById('homeScreen'),
+  map: document.getElementById('mapScreen'),
+  game: document.getElementById('gameScreen'),
+  stats: document.getElementById('statsScreen'),
+  upgrades: document.getElementById('upgradesScreen'),
+  about: document.getElementById('aboutScreen'),
+  help: document.getElementById('helpScreen')
+};
+
+let currentScreen = 'home';
+let selectedMap = 'forest';
+
+let gameState = {
+  lives:20,
+  money:150,
+  wave:1,
+  running:false,
+  paused:false,
+  speed:1,
+  autoWave:false,
+  waveActive:false,
+  enemies:[],
+  towers:[],
+  projectiles:[],
+  selectedTowerType:null,
+  placingTower:false,
+  hoverPos:{x:0,y:0},
+  selectedTowerInstance:null,
+  metaCurrency:0,
+  globalUpgrades:{},
+  stats:{
+    totalWaves:0,
+    totalEnemies:0,
+    totalBosses:0,
+    upgradeCurrencyEarned:0,
+    runsPlayed:0,
+    highestWave:0,
+    bestForest:0,
+    bestDesert:0,
+    bestFrozen:0,
+    globalUpgradesPurchased:0,
+    upgradeCurrencySpent:0
+  }
+};
+
+const STORAGE_KEY = 'runeRiftDefense_v02';
+
+function loadSave(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    if(data.metaCurrency!=null) gameState.metaCurrency = data.metaCurrency;
+    if(data.globalUpgrades) gameState.globalUpgrades = data.globalUpgrades;
+    if(data.stats) gameState.stats = data.stats;
+  }catch(e){}
+}
+function saveGame(){
+  const data = {
+    metaCurrency:gameState.metaCurrency,
+    globalUpgrades:gameState.globalUpgrades,
+    stats:gameState.stats
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function setScreen(name){
+  currentScreen = name;
+  Object.values(screens).forEach(s=>s.classList.remove('active'));
+  screens[name].classList.add('active');
+  if(name==='stats') updateStatsUI();
+  if(name==='upgrades') { updateMetaUI(); renderUpgradeGrid(); }
+}
+
+document.querySelectorAll('.menu-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const go = btn.getAttribute('data-go');
+    if(go==='map') setScreen('map');
+    if(go==='stats') setScreen('stats');
+    if(go==='upgrades') setScreen('upgrades');
+    if(go==='about') setScreen('about');
+    if(go==='help') setScreen('help');
+  });
+});
+
+document.querySelectorAll('.nav-btn[data-go]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const go = btn.getAttribute('data-go');
+    if(go==='home') setScreen('home');
+    if(go==='map') setScreen('map');
+    if(go==='stats') setScreen('stats');
+    if(go==='upgrades') setScreen('upgrades');
+    if(go==='about') setScreen('about');
+    if(go==='help') setScreen('help');
+  });
+});
+
+const mapButtons = document.querySelectorAll('.map-btn');
+mapButtons.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    selectedMap = btn.getAttribute('data-map');
+    mapButtons.forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+document.getElementById('startGameBtn').addEventListener('click',()=>{
+  startNewRun();
+  setScreen('game');
+});
+
+const hudLives = document.getElementById('hudLives');
+const hudMoney = document.getElementById('hudMoney');
+const hudWave = document.getElementById('hudWave');
+const startWaveBtn = document.getElementById('startWaveBtn');
+const autoWaveBtn = document.getElementById('autoWaveBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const speedBtn = document.getElementById('speedBtn');
+const backToMenuBtn = document.getElementById('backToMenuBtn');
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+const gameContainer = document.getElementById('gameContainer');
+
+startWaveBtn.addEventListener('click',()=>{
+  if(!gameState.running) return;
+  if(!gameState.waveActive && gameState.enemies.length===0){
+    spawnWave();
+  }
+});
+autoWaveBtn.addEventListener('click',()=>{
+  gameState.autoWave = !gameState.autoWave;
+  autoWaveBtn.textContent = gameState.autoWave ? '🔁 Auto On' : '🔁 Auto Off';
+});
+pauseBtn.addEventListener('click',()=>{
+  gameState.paused = !gameState.paused;
+  pauseBtn.textContent = gameState.paused ? '▶️ Resume' : '⏸️ Pause';
+});
+speedBtn.addEventListener('click',()=>{
+  if(gameState.speed===1){gameState.speed=2;speedBtn.textContent='⏩ x2';}
+  else if(gameState.speed===2){gameState.speed=3;speedBtn.textContent='⏩ x3';}
+  else{gameState.speed=1;speedBtn.textContent='⏩ x1';}
+});
+backToMenuBtn.addEventListener('click',()=>{
+  gameState.running=false;
+  setScreen('home');
+});
+
+fullscreenBtn.addEventListener('click',()=>{
+  if(!document.fullscreenElement){
+    gameContainer.requestFullscreen().catch(()=>{});
+  }else{
+    document.exitFullscreen().catch(()=>{});
+  }
+});
+
+const gameOverOverlay = document.getElementById('gameOverOverlay');
+document.getElementById('leaveGameBtn').addEventListener('click',()=>{
+  gameOverOverlay.classList.remove('visible');
+  setScreen('home');
+});
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const MAPS = {
+  forest:{
+    path:[{x:0,y:180},{x:160,y:180},{x:220,y:120},{x:360,y:120},{x:420,y:220},{x:640,y:220}],
+    obstacles:[
+      {x:90,y:120,w:50,h:40,type:'treeCluster'},
+      {x:260,y:210,w:70,h:30,type:'logPile'},
+      {x:380,y:150,w:40,h:40,type:'rockPatch'},
+      {x:520,y:190,w:60,h:30,type:'bushPatch'}
+    ],
+    bg:'forest'
+  },
+  desert:{
+    path:[{x:0,y:210},{x:150,y:210},{x:210,y:150},{x:340,y:150},{x:420,y:230},{x:640,y:230}],
+    obstacles:[
+      {x:80,y:160,w:60,h:40,type:'dune'},
+      {x:230,y:230,w:70,h:30,type:'ruinBlock'},
+      {x:360,y:180,w:50,h:40,type:'rockCluster'},
+      {x:500,y:210,w:60,h:30,type:'cactusPatch'}
+    ],
+    bg:'desert'
+  },
+  frozen:{
+    path:[{x:0,y:150},{x:180,y:150},{x:240,y:230},{x:380,y:230},{x:460,y:110},{x:640,y:110}],
+    obstacles:[
+      {x:100,y:190,w:50,h:40,type:'iceChunk'},
+      {x:260,y:140,w:70,h:30,type:'snowDrift'},
+      {x:400,y:210,w:50,h:40,type:'frozenRock'},
+      {x:520,y:140,w:60,h:40,type:'pineCluster'}
+    ],
+    bg:'frozen'
+  }
+};
+
+const TOWERS = [
+  {key:'dart', name:'Dart', cost:50, baseDamage:5, baseRange:90, baseRate:1.0, shape:'circle'},
+  {key:'cannon', name:'Cannon', cost:100, baseDamage:8, baseRange:100, baseRate:1.5, shape:'square'},
+  {key:'sniper', name:'Sniper', cost:120, baseDamage:10, baseRange:220, baseRate:2.0, shape:'triangle'},
+  {key:'flame', name:'Flamethrower', cost:110, baseDamage:3, baseRange:80, baseRate:0.4, shape:'rect'},
+  {key:'railgun', name:'Railgun', cost:200, baseDamage:15, baseRange:140, baseRate:1.8, shape:'diamond'},
+  {key:'bank', name:'Wooden Money Hut', cost:300, baseDamage:0, baseRange:0, baseRate:0, shape:'hut'}
+];
+TOWERS.sort((a,b)=>a.cost-b.cost);
+
+const UPGRADE_DEFS = [
+  {key:'damage', name:'Damage Boost', desc:'Doubles tower damage per level.', max:5},
+  {key:'range', name:'Range Boost', desc:'Doubles tower range per level.', max:5},
+  {key:'firerate', name:'Fire Rate Boost', desc:'Doubles tower fire rate per level.', max:5}
+];
+const BASE_UPGRADE_COST = 250;
+
+function getUpgradeLevel(key){return gameState.globalUpgrades[key]||0;}
+function getUpgradeCost(key){
+  const lvl = getUpgradeLevel(key);
+  return BASE_UPGRADE_COST*(lvl+1);
+}
+
+const towerPanel = document.getElementById('towerPanel');
+const towerToggleBtn = document.getElementById('towerToggleBtn');
+const towerListEl = document.getElementById('towerList');
+const towerInfoEl = document.getElementById('towerInfo');
+
+towerToggleBtn.addEventListener('click',()=>{
+  const isOpen = towerPanel.classList.contains('open');
+  if(isOpen){
+    towerPanel.classList.remove('open');
+    towerPanel.classList.add('collapsed');
+    towerToggleBtn.textContent='Towers ⮝';
+  }else{
+    towerPanel.classList.remove('collapsed');
+    towerPanel.classList.add('open');
+    towerToggleBtn.textContent='Towers ⮟';
+  }
+});
+
+function renderTowerList(){
+  towerListEl.innerHTML='';
+  TOWERS.forEach(t=>{
+    const btn = document.createElement('button');
+    btn.className='tower-btn';
+    btn.innerHTML=`<div>${t.name}</div><span>$${t.cost}</span>`;
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.tower-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      gameState.selectedTowerType = t;
+      gameState.placingTower = true;
+      towerInfoEl.textContent = `${t.name} – Cost $${t.cost}`;
+    });
+    towerListEl.appendChild(btn);
+  });
+}
+
+const metaCurrencyEl = document.getElementById('metaCurrency');
+const upgradeGridEl = document.getElementById('upgradeGrid');
+
+function updateMetaUI(){
+  metaCurrencyEl.textContent = gameState.metaCurrency;
+}
+function renderUpgradeGrid(){
+  upgradeGridEl.innerHTML='';
+  UPGRADE_DEFS.forEach(u=>{
+    const lvl = getUpgradeLevel(u.key);
+    const cost = getUpgradeCost(u.key);
+    const card = document.createElement('div');
+    card.className='stat-card';
+    card.innerHTML=`
+      <div class="stat-label">${u.name}</div>
+      <div class="stat-value">Lv ${lvl} / ${u.max}</div>
+      <p style="margin:4px 0 0;font-size:11px;color:var(--muted);">${u.desc}</p>
+      <p style="margin:2px 0 0;font-size:11px;">Cost: $${cost}</p>
+    `;
+    card.style.cursor='pointer';
+    card.addEventListener('click',()=>{
+      if(lvl>=u.max) return;
+      if(gameState.metaCurrency<cost) return;
+      gameState.metaCurrency-=cost;
+      gameState.globalUpgrades[u.key]=(lvl+1);
+      gameState.stats.globalUpgradesPurchased++;
+      gameState.stats.upgradeCurrencySpent+=cost;
+      saveGame();
+      updateMetaUI();
+      renderUpgradeGrid();
+    });
+    upgradeGridEl.appendChild(card);
+  });
+}
+
+function updateStatsUI(){
+  document.getElementById('statTotalWaves').textContent = gameState.stats.totalWaves;
+  document.getElementById('statTotalEnemies').textContent = gameState.stats.totalEnemies;
+  document.getElementById('statTotalBosses').textContent = gameState.stats.totalBosses;
+  document.getElementById('statUpgradeCurrency').textContent = gameState.stats.upgradeCurrencyEarned;
+  document.getElementById('statRunsPlayed').textContent = gameState.stats.runsPlayed;
+  document.getElementById('statHighestWave').textContent = gameState.stats.highestWave;
+  document.getElementById('statBestForest').textContent = gameState.stats.bestForest;
+  document.getElementById('statBestDesert').textContent = gameState.stats.bestDesert;
+  document.getElementById('statBestFrozen').textContent = gameState.stats.bestFrozen;
+  document.getElementById('statGlobalUpgrades').textContent = gameState.stats.globalUpgradesPurchased;
+  document.getElementById('statUpgradeSpent').textContent = gameState.stats.upgradeCurrencySpent;
+}
+
+function updateHUD(){
+  hudLives.textContent = gameState.lives;
+  hudMoney.textContent = gameState.money;
+  hudWave.textContent = gameState.wave;
+}
+
+function startNewRun(){
+  gameState.lives=20;
+  gameState.money=150;
+  gameState.wave=1;
+  gameState.enemies=[];
+  gameState.towers=[];
+  gameState.projectiles=[];
+  gameState.running=true;
+  gameState.paused=false;
+  gameState.speed=1;
+  gameState.autoWave=false;
+  gameState.waveActive=false;
+  gameState.stats.runsPlayed++;
+  autoWaveBtn.textContent='🔁 Auto Off';
+  pauseBtn.textContent='⏸️ Pause';
+  speedBtn.textContent='⏩ x1';
+  updateHUD();
+  saveGame();
+}
+
+function getEnemyPos(e){
+  const map = MAPS[selectedMap];
+  const speed = e.speed;
+  const t = e.t;
+  const path = map.path;
+  if(t<=0) return {x:path[0].x,y:path[0].y};
+  let dist = t*speed;
+  for(let i=0;i<path.length-1;i++){
+    const a=path[i], b=path[i+1];
+    const segLen = Math.hypot(b.x-a.x,b.y-a.y);
+    if(dist<=segLen){
+      const r = dist/segLen;
+      return {x:a.x+(b.x-a.x)*r,y:a.y+(b.y-a.y)*r};
+    }
+    dist-=segLen;
+  }
+  return {x:path[path.length-1].x,y:path[path.length-1].y};
+}
+
+function spawnWave(){
+  gameState.enemies=[];
+  gameState.waveActive=true;
+
+  const wave = gameState.wave;
+  const baseCount = 6 + wave*2;
+  for(let i=0;i<baseCount;i++){
+    const typeRoll = Math.random();
+    let enemyType;
+    if(wave%15===0 && i===0){
+      enemyType='boss';
+    }else if(typeRoll<0.5){
+      enemyType='basic';
+    }else if(typeRoll<0.75){
+      enemyType='fast';
+    }else{
+      enemyType='tank';
+    }
+
+    let hp=10+wave*2;
+    let speed=1.0;
+    if(enemyType==='fast'){hp*=0.6;speed=1.8;}
+    if(enemyType==='tank'){hp*=2.0;speed=0.7;}
+    if(enemyType==='boss'){hp*=6.0;speed=0.6;}
+
+    gameState.enemies.push({
+      t:-i*18,
+      hp,
+      maxHp:hp,
+      type:enemyType
+    });
+  }
+}
+
+function endWave(){
+  if(!gameState.waveActive) return;
+  gameState.waveActive=false;
+
+  gameState.stats.totalWaves++;
+  if(gameState.wave>gameState.stats.highestWave) gameState.stats.highestWave=gameState.wave;
+  if(selectedMap==='forest' && gameState.wave>gameState.stats.bestForest) gameState.stats.bestForest=gameState.wave;
+  if(selectedMap==='desert' && gameState.wave>gameState.stats.bestDesert) gameState.stats.bestDesert=gameState.wave;
+  if(selectedMap==='frozen' && gameState.wave>gameState.stats.bestFrozen) gameState.stats.bestFrozen=gameState.wave;
+
+  let bankIncome=0;
+  gameState.towers.forEach(t=>{
+    if(t.type.key==='bank') bankIncome+=100*t.bankLevel;
+  });
+  gameState.money+=bankIncome;
+
+  if(gameState.wave>0 && gameState.wave%50===0){
+    gameState.metaCurrency+=150;
+    gameState.stats.upgradeCurrencyEarned+=150;
+  }
+
+  gameState.wave++;
+  updateHUD();
+  updateMetaUI();
+  saveGame();
+
+  if(gameState.autoWave && gameState.running){
+    spawnWave();
+  }
+}
+
+function loseLife(amount){
+  gameState.lives-=amount;
+  if(gameState.lives<=0){
+    gameState.lives=0;
+    gameState.running=false;
+    gameOverOverlay.classList.add('visible');
+  }
+  updateHUD();
+}
+
+function getTowerRangeWithUpgrades(type,level){
+  let range = type.baseRange;
+  const rLvl = getUpgradeLevel('range');
+  if(rLvl>0) range*=Math.pow(2,rLvl);
+  range*=(1+0.2*level);
+  return range;
+}
+function getTowerDamageWithUpgrades(type,level){
+  let dmg = type.baseDamage;
+  const dLvl = getUpgradeLevel('damage');
+  if(dLvl>0) dmg*=Math.pow(2,dLvl);
+  dmg*=(1+0.2*level);
+  return dmg;
+}
+function getTowerRateWithUpgrades(type,level){
+  let rate = type.baseRate;
+  const fLvl = getUpgradeLevel('firerate');
+  if(fLvl>0) rate/=Math.pow(2,fLvl);
+  rate/=(1+0.2*level);
+  return rate;
+}
+
+function pointToSegmentDistance(p,a,b){
+  const dx=b.x-a.x, dy=b.y-a.y;
+  if(dx===0 && dy===0) return Math.hypot(p.x-a.x,p.y-a.y);
+  const t=((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy);
+  if(t<0) return Math.hypot(p.x-a.x,p.y-a.y);
+  if(t>1) return Math.hypot(p.x-b.x,p.y-b.y);
+  const proj={x:a.x+dx*t,y:a.y+dy*t};
+  return Math.hypot(p.x-proj.x,p.y-proj.y);
+}
+function canPlaceTowerAt(x,y,type){
+  if(x<20||x>canvas.width-20||y<20||y>canvas.height-20) return false;
+  const map = MAPS[selectedMap];
+  for(let i=0;i<map.path.length-1;i++){
+    const a=map.path[i], b=map.path[i+1];
+    const dist = pointToSegmentDistance({x,y},a,b);
+    if(dist<25) return false;
+  }
+  for(const o of map.obstacles){
+    if(x>o.x-15 && x<o.x+o.w+15 && y>o.y-15 && y<o.y+o.h+15) return false;
+  }
+  for(const t of gameState.towers){
+    if(Math.hypot(t.x-x,t.y-y)<24) return false;
+  }
+  return true;
+}
+
+canvas.addEventListener('mousemove',e=>{
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX-rect.left)*(canvas.width/rect.width);
+  const y = (e.clientY-rect.top)*(canvas.height/rect.height);
+  gameState.hoverPos={x,y};
+});
+canvas.addEventListener('click',e=>{
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX-rect.left)*(canvas.width/rect.width);
+  const y = (e.clientY-rect.top)*(canvas.height/rect.height);
+
+  if(gameState.placingTower && gameState.selectedTowerType){
+    const t = gameState.selectedTowerType;
+    const valid = canPlaceTowerAt(x,y,t);
+    if(valid && gameState.money>=t.cost){
+      gameState.money-=t.cost;
+      const tower={
+        x,y,
+        type:t,
+        level:0,
+        cooldown:0,
+        bankLevel:t.key==='bank'?1:0
+      };
+      gameState.towers.push(tower);
+      gameState.placingTower=false;
+      gameState.selectedTowerType=null;
+      document.querySelectorAll('.tower-btn').forEach(b=>b.classList.remove('selected'));
+      towerInfoEl.textContent='Tower placed.';
+      updateHUD();
+    }
+    return;
+  }
+
+  let found=null;
+  for(const tower of gameState.towers){
+    if(Math.hypot(tower.x-x,tower.y-y)<12){found=tower;break;}
+  }
+  if(found){
+    gameState.selectedTowerInstance=found;
+    showTowerUpgradePanel(found);
+  }else{
+    hideTowerUpgradePanel();
+  }
+});
+
+const towerUpgradePanel = document.getElementById('towerUpgradePanel');
+const towerUpgradeTitle = document.getElementById('towerUpgradeTitle');
+const towerUpgradeStats = document.getElementById('towerUpgradeStats');
+const towerUpgradeLevel = document.getElementById('towerUpgradeLevel');
+const towerUpgradeCost = document.getElementById('towerUpgradeCost');
+const towerUpgradeButton = document.getElementById('towerUpgradeButton');
+
+function getTowerUpgradeCost(level){
+  if(level===0) return 50;
+  if(level===1) return 75;
+  if(level===2) return 100;
+  if(level===3) return 150;
+  if(level===4) return 200;
+  if(level===5) return 250;
+  if(level===6) return 300;
+  return 9999;
+}
+function showTowerUpgradePanel(tower){
+  towerUpgradePanel.classList.add('visible');
+  const lvl = tower.level;
+  const dmg = getTowerDamageWithUpgrades(tower.type,lvl).toFixed(1);
+  const range = getTowerRangeWithUpgrades(tower.type,lvl).toFixed(0);
+  const rate = getTowerRateWithUpgrades(tower.type,lvl).toFixed(2);
+  towerUpgradeTitle.textContent = tower.type.key==='bank'?'Wooden Money Hut':tower.type.name;
+  if(tower.type.key==='bank'){
+    towerUpgradeStats.textContent=`Income: $${100*tower.bankLevel} / wave`;
+  }else{
+    towerUpgradeStats.textContent=`Damage: ${dmg} • Range: ${range} • Rate: ${rate}s`;
+  }
+  towerUpgradeLevel.textContent=`Level: ${lvl+1} / 8`;
+  const cost = getTowerUpgradeCost(lvl);
+  towerUpgradeCost.textContent=`Upgrade Cost: $${cost}`;
+  towerUpgradeButton.disabled = (lvl>=7 || gameState.money<cost);
+}
+function hideTowerUpgradePanel(){
+  towerUpgradePanel.classList.remove('visible');
+  gameState.selectedTowerInstance=null;
+}
+towerUpgradeButton.addEventListener('click',()=>{
+  const tower = gameState.selectedTowerInstance;
+  if(!tower) return;
+  const lvl = tower.level;
+  if(lvl>=7) return;
+  const cost = getTowerUpgradeCost(lvl);
+  if(gameState.money<cost) return;
+  gameState.money-=cost;
+  tower.level++;
+  if(tower.type.key==='bank') tower.bankLevel++;
+  updateHUD();
+  showTowerUpgradePanel(tower);
+});
+
+function drawDetailedBackground(){
+  const map = MAPS[selectedMap];
+  if(map.bg==='forest'){
+    const grad = ctx.createLinearGradient(0,0,0,canvas.height);
+    grad.addColorStop(0,'#264d2b');
+    grad.addColorStop(0.5,'#1b3a22');
+    grad.addColorStop(1,'#0c1f12');
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle='rgba(255,255,255,0.03)';
+    for(let i=0;i<80;i++){
+      const x=Math.random()*canvas.width;
+      const y=Math.random()*canvas.height;
+      const r=2+Math.random()*3;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+    }
+
+    drawPath('#3b2a18','#6b4a28');
+  }else if(map.bg==='desert'){
+    const grad = ctx.createLinearGradient(0,0,0,canvas.height);
+    grad.addColorStop(0,'#f0c46a');
+    grad.addColorStop(0.5,'#d89b4a');
+    grad.addColorStop(1,'#a86a2b');
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle='rgba(255,255,255,0.06)';
+    for(let i=0;i<60;i++){
+      const x=Math.random()*canvas.width;
+      const y=Math.random()*canvas.height;
+      const w=20+Math.random()*40;
+      const h=4+Math.random()*6;
+      ctx.beginPath();ctx.ellipse(x,y,w,h,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();
+    }
+
+    drawPath('#7b5a33','#a67c52');
+  }else{
+    const grad = ctx.createLinearGradient(0,0,0,canvas.height);
+    grad.addColorStop(0,'#e0f2ff');
+    grad.addColorStop(0.5,'#b5d4f5');
+    grad.addColorStop(1,'#7a9ac5');
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle='rgba(255,255,255,0.4)';
+    for(let i=0;i<50;i++){
+      const x=Math.random()*canvas.width;
+      const y=Math.random()*canvas.height;
+      const w=25+Math.random()*40;
+      const h=8+Math.random()*10;
+      ctx.beginPath();ctx.ellipse(x,y,w,h,0,0,Math.PI*2);ctx.fill();
+    }
+
+    drawPath('#b0c4de','#e0f0ff');
+  }
+  drawObstacles();
+}
+
+function drawPath(dark,light){
+  const map = MAPS[selectedMap];
+  ctx.lineCap='round';
+
+  ctx.lineWidth=46;
+  ctx.strokeStyle='rgba(0,0,0,0.35)';
+  ctx.beginPath();
+  ctx.moveTo(map.path[0].x,map.path[0].y+4);
+  for(let i=1;i<map.path.length;i++) ctx.lineTo(map.path[i].x,map.path[i].y+4);
+  ctx.stroke();
+
+  ctx.lineWidth=40;
+  ctx.strokeStyle=dark;
+  ctx.beginPath();
+  ctx.moveTo(map.path[0].x,map.path[0].y);
+  for(let i=1;i<map.path.length;i++) ctx.lineTo(map.path[i].x,map.path[i].y);
+  ctx.stroke();
+
+  ctx.lineWidth=26;
+  ctx.strokeStyle=light;
+  ctx.beginPath();
+  ctx.moveTo(map.path[0].x,map.path[0].y);
+  for(let i=1;i<map.path.length;i++) ctx.lineTo(map.path[i].x,map.path[i].y);
+  ctx.stroke();
+}
+
+function drawObstacles(){
+  const map = MAPS[selectedMap];
+  map.obstacles.forEach(o=>{
+    ctx.save();
+    if(o.type==='treeCluster'){
+      ctx.fillStyle='#234b2a';
+      ctx.beginPath();ctx.arc(o.x+10,o.y+10,12,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(o.x+30,o.y+18,14,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(o.x+22,o.y+28,10,0,Math.PI*2);ctx.fill();
+    }else if(o.type==='logPile'){
+      ctx.fillStyle='#6b4a2b';
+      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,6);ctx.fill();
+      ctx.fillStyle='#4b2a1b';
+      ctx.fillRect(o.x+6,o.y+4,o.w-12,4);
+    }else if(o.type==='rockPatch'){
+      ctx.fillStyle='#4b555f';
+      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,8);ctx.fill();
+      ctx.fillStyle='#7b8a96';
+      ctx.beginPath();ctx.arc(o.x+12,o.y+12,6,0,Math.PI*2);ctx.fill();
+    }else if(o.type==='bushPatch'){
+      ctx.fillStyle='#2f5a2f';
+      ctx.beginPath();ctx.arc(o.x+10,o.y+18,10,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(o.x+30,o.y+14,12,0,Math.PI*2);ctx.fill();
+    }else if(o.type==='dune'){
+      ctx.fillStyle='#e8c27a';
+      ctx.beginPath();ctx.ellipse(o.x+o.w/2,o.y+o.h/2,o.w/2,o.h/2,0,0,Math.PI*2);ctx.fill();
+    }else if(o.type==='ruinBlock'){
+      ctx.fillStyle='#b8aa8a';
+      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,4);ctx.fill();
+      ctx.fillStyle='#8a7a5a';
+      ctx.fillRect(o.x+6,o.y+6,o.w-12,4);
+    }else if(o.type==='rockCluster'){
+      ctx.fillStyle='#7b6b5a';
+      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,6);ctx.fill();
+    }else if(o.type==='cactusPatch'){
+      ctx.fillStyle='#2f7a3a';
+      ctx.fillRect(o.x+10,o.y+4,8,o.h-4);
+      ctx.fillRect(o.x+24,o.y+8,8,o.h-8);
+    }else if(o.type==='iceChunk'){
+      ctx.fillStyle='#d0e8ff';
+      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,6);ctx.fill();
+      ctx.fillStyle='#f5fbff';
+      ctx.beginPath();ctx.arc(o.x+14,o.y+12,6,0,Math.PI*2);ctx.fill();
+    }else if(o.type==='snowDrift'){
+      ctx.fillStyle='#f5f9ff';
+      ctx.beginPath();ctx.ellipse(o.x+o.w/2,o.y+o.h/2,o.w/2,o.h/2,0,0,Math.PI*2);ctx.fill();
+    }else if(o.type==='frozenRock'){
+      ctx.fillStyle='#9bb0c8';
+      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,6);ctx.fill();
+    }else if(o.type==='pineCluster'){
+      ctx.fillStyle='#234b2a';
+      ctx.beginPath();ctx.moveTo(o.x+20,o.y);ctx.lineTo(o.x+8,o.y+24);ctx.lineTo(o.x+32,o.y+24);ctx.closePath();ctx.fill();
+      ctx.beginPath();ctx.moveTo(o.x+20,o.y+10);ctx.lineTo(o.x+10,o.y+30);ctx.lineTo(o.x+30,o.y+30);ctx.closePath();ctx.fill();
+    }
+    ctx.restore();
+  });
+}
+
+function drawEnemies(){
+  gameState.enemies.forEach(e=>{
+    const pos = getEnemyPos(e);
+    let color='#4cafef';
+    let glowColor='#4cafef';
+    let shape='circle';
+    if(e.type==='basic'){color='#4cafef';glowColor='#4cafef';shape='circle';}
+    if(e.type==='fast'){color='#00e5ff';glowColor='#00e5ff';shape='triangle';}
+    if(e.type==='tank'){color='#ffb347';glowColor='#ffb347';shape='square';}
+    if(e.type==='boss'){color='#b76bff';glowColor='#b76bff';shape='diamond';}
+
+    ctx.save();
+    ctx.shadowColor=glowColor;
+    ctx.shadowBlur=18;
+    ctx.fillStyle=color;
+
+    if(shape==='circle'){
+      ctx.beginPath();ctx.arc(pos.x,pos.y,10,0,Math.PI*2);ctx.fill();
+    }else if(shape==='triangle'){
+      ctx.beginPath();
+      ctx.moveTo(pos.x,pos.y-11);
+      ctx.lineTo(pos.x+10,pos.y+9);
+      ctx.lineTo(pos.x-10,pos.y+9);
+      ctx.closePath();
+      ctx.fill();
+    }else if(shape==='square'){
+      ctx.beginPath();ctx.rect(pos.x-10,pos.y-10,20,20);ctx.fill();
+    }else if(shape==='diamond'){
+      ctx.beginPath();
+      ctx.moveTo(pos.x,pos.y-12);
+      ctx.lineTo(pos.x+12,pos.y);
+      ctx.lineTo(pos.x,pos.y+12);
+      ctx.lineTo(pos.x-12,pos.y);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    ctx.restore();
+
+    const hpRatio = Math.max(0,e.hp/e.maxHp);
+    const barW=18, barH=3;
+    ctx.fillStyle='rgba(0,0,0,0.6)';
+    ctx.fillRect(pos.x-barW/2,pos.y-16,barW,barH);
+    ctx.fillStyle='#4caf50';
+    ctx.fillRect(pos.x-barW/2,pos.y-16,barW*hpRatio,barH);
+  });
+}
+
+function drawTowerShape(t){
+  ctx.save();
+  ctx.translate(t.x,t.y);
+  if(t.type.shape==='circle'){
+    ctx.fillStyle='#4cafef';
+    ctx.beginPath();ctx.arc(0,0,10,0,Math.PI*2);ctx.fill();
+  }else if(t.type.shape==='square'){
+    ctx.fillStyle='#ffb347';
+    ctx.beginPath();ctx.rect(-10,-10,20,20);ctx.fill();
+  }else if(t.type.shape==='triangle'){
+    ctx.fillStyle='#9b59b6';
+    ctx.beginPath();
+    ctx.moveTo(0,-12);ctx.lineTo(10,8);ctx.lineTo(-10,8);ctx.closePath();ctx.fill();
+  }else if(t.type.shape==='rect'){
+    ctx.fillStyle='#e74c3c';
+    ctx.beginPath();ctx.rect(-12,-8,24,16);ctx.fill();
+  }else if(t.type.shape==='diamond'){
+    ctx.fillStyle='#00e5ff';
+    ctx.beginPath();
+    ctx.moveTo(0,-12);ctx.lineTo(10,0);ctx.lineTo(0,12);ctx.lineTo(-10,0);ctx.closePath();ctx.fill();
+  }else if(t.type.shape==='hut'){
+    ctx.fillStyle='#7b4a2b';
+    ctx.fillRect(-10,-8,20,14);
+    ctx.fillStyle='#3f6b3f';
+    ctx.beginPath();
+    ctx.moveTo(-12,-8);ctx.lineTo(0,-16);ctx.lineTo(12,-8);ctx.closePath();ctx.fill();
+  }
+  ctx.restore();
+}
+function drawTowers(){
+  gameState.towers.forEach(drawTowerShape);
+}
+function drawProjectiles(){
+  ctx.fillStyle='#ffffff';
+  gameState.projectiles.forEach(p=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();
+  });
+}
+function drawGhost(){
+  if(!gameState.placingTower || !gameState.selectedTowerType) return;
+  const t = gameState.selectedTowerType;
+  const pos = gameState.hoverPos;
+  const validPlacement = canPlaceTowerAt(pos.x,pos.y,t);
+  const hasMoney = gameState.money>=t.cost;
+  const ok = validPlacement && hasMoney;
+  const range = getTowerRangeWithUpgrades(t,0);
+  ctx.save();
+  ctx.globalAlpha=0.25;
+  ctx.fillStyle = ok? '#4caf50' : '#ff4b6a';
+  ctx.beginPath();ctx.arc(pos.x,pos.y,range,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=0.8;
+  ctx.translate(pos.x,pos.y);
+  ctx.fillStyle = ok? '#4caf50' : '#ff4b6a';
+  if(t.shape==='circle'){
+    ctx.beginPath();ctx.arc(0,0,10,0,Math.PI*2);ctx.fill();
+  }else if(t.shape==='square'){
+    ctx.beginPath();ctx.rect(-10,-10,20,20);ctx.fill();
+  }else if(t.shape==='triangle'){
+    ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(10,8);ctx.lineTo(-10,8);ctx.closePath();ctx.fill();
+  }else if(t.shape==='rect'){
+    ctx.beginPath();ctx.rect(-12,-8,24,16);ctx.fill();
+  }else if(t.shape==='diamond'){
+    ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(10,0);ctx.lineTo(0,12);ctx.lineTo(-10,0);ctx.closePath();ctx.fill();
+  }else if(t.shape==='hut'){
+    ctx.fillRect(-10,-8,20,14);
+    ctx.beginPath();ctx.moveTo(-12,-8);ctx.lineTo(0,-16);ctx.lineTo(12,-8);ctx.closePath();ctx.fill();
+  }
+  ctx.restore();
+}
+
+let lastTime=0;
+function update(dt){
+  if(!gameState.running || gameState.paused) return;
+  const step = dt*gameState.speed;
+
+  gameState.enemies.forEach(e=>{e.t+=step*40;});
+  for(let i=gameState.enemies.length-1;i>=0;i--){
+    const e = gameState.enemies[i];
+    const pos = getEnemyPos(e);
+    if(pos.x>=canvas.width-5){
+      loseLife(e.type==='boss'?5:1);
+      gameState.enemies.splice(i,1);
+    }
+  }
+
+  gameState.towers.forEach(t=>{
+    if(t.type.key==='bank') return;
+    t.cooldown-=step;
+    if(t.cooldown<=0){
+      let target=null, bestT=-1;
+      const range = getTowerRangeWithUpgrades(t.type,t.level);
+      gameState.enemies.forEach(e=>{
+        const pos=getEnemyPos(e);
+        const d=Math.hypot(pos.x-t.x,pos.y-t.y);
+        if(d<=range && e.t>bestT){bestT=e.t;target={enemy:e,pos};}
+      });
+      if(target){
+        const dmg = getTowerDamageWithUpgrades(t.type,t.level);
+        gameState.projectiles.push({x:t.x,y:t.y,tx:target.pos.x,ty:target.pos.y,dmg});
+        t.cooldown = getTowerRateWithUpgrades(t.type,t.level);
+      }else{
+        t.cooldown=0.1;
+      }
+    }
+  });
+
+  for(let i=gameState.projectiles.length-1;i>=0;i--){
+    const p = gameState.projectiles[i];
+    const dx=p.tx-p.x, dy=p.ty-p.y;
+    const dist=Math.hypot(dx,dy);
+    const speedP=260*step;
+    if(dist<=speedP){
+      let hitIndex=-1, bestDist=9999;
+      for(let j=0;j<gameState.enemies.length;j++){
+        const e=gameState.enemies[j];
+        const pos=getEnemyPos(e);
+        const d=Math.hypot(pos.x-p.tx,pos.y-p.ty);
+        if(d<18 && d<bestDist){bestDist=d;hitIndex=j;}
+      }
+      if(hitIndex>=0){
+        const e=gameState.enemies[hitIndex];
+        e.hp-=p.dmg;
+        if(e.hp<=0){
+          gameState.money+=e.type==='boss'?20:5;
+          gameState.stats.totalEnemies++;
+          if(e.type==='boss') gameState.stats.totalBosses++;
+          gameState.enemies.splice(hitIndex,1);
+          updateHUD();
+        }
+      }
+      gameState.projectiles.splice(i,1);
+    }else{
+      p.x+=dx/dist*speedP;
+      p.y+=dy/dist*speedP;
+    }
+  }
+
+  if(gameState.waveActive && gameState.enemies.length===0){
+    endWave();
+  }
+}
+
+function loop(timestamp){
+  const dt=(timestamp-lastTime)/1000;
+  lastTime=timestamp;
+  drawDetailedBackground();
+  drawEnemies();
+  drawTowers();
+  drawProjectiles();
+  drawGhost();
+  update(dt);
+  requestAnimationFrame(loop);
+}
+
+loadSave();
+renderTowerList();
+updateMetaUI();
+renderUpgradeGrid();
+updateStatsUI();
+updateHUD();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
