@@ -559,7 +559,7 @@
   <div id="homeScreen" class="screen active">
     <div>
       <div class="game-title">Rune Rift Defense</div>
-      <div class="game-sub">A solo‑developed tower defense game with rune‑powered enemies and global upgrades.</div>
+      <div class="game-sub">A dark‑fantasy tower defense with rune‑powered enemies and global upgrades.</div>
       <div class="menu-buttons">
         <button class="menu-btn" data-go="map">Play</button>
         <button class="menu-btn" data-go="stats">Stats</button>
@@ -589,15 +589,15 @@
     </div>
     <div class="map-list">
       <button class="map-btn" data-map="forest">
-        <div>Forest Trail<br><span>Curved dirt path through trees, logs, stones, and grass patches.</span></div>
+        <div>Forest Trail<br><span>Corrupted forest path with twisted trees, glowing fungi, and mossy rocks.</span></div>
         <div>🌲</div>
       </button>
       <button class="map-btn" data-map="desert">
-        <div>Desert Canyon<br><span>Sand dunes, ruins, rocks, and cacti around a winding canyon path.</span></div>
+        <div>Desert Canyon<br><span>Cursed canyon with ruins, bones, and glowing rune pillars.</span></div>
         <div>🏜️</div>
       </button>
       <button class="map-btn" data-map="frozen">
-        <div>Frozen Valley<br><span>Icy path through snow drifts, ice chunks, and pine clusters.</span></div>
+        <div>Frozen Valley<br><span>Frozen wasteland with ice shards, dead pines, and frost crystals.</span></div>
         <div>❄️</div>
       </button>
     </div>
@@ -624,7 +624,7 @@
       <div class="hud">
         <div class="hud-left">
           <div class="hud-label">❤️ Lives:<span id="hudLives">20</span></div>
-          <div class="hud-label">💵 Money:<span id="hudMoney">150</span></div>
+          <div class="hud-label">💵 Money:<span id="hudMoney">125</span></div>
           <div class="hud-label">Wave:<span id="hudWave">1</span></div>
         </div>
         <div class="hud-right">
@@ -740,7 +740,7 @@
     <div class="content-scroll">
       <h2 class="section-title">About Rune Rift Defense</h2>
       <p>
-        <b>Rune Rift Defense</b> is a solo‑developed tower defense game where you defend unstable rift paths
+        <b>Rune Rift Defense</b> is a solo‑developed dark‑fantasy tower defense game where you defend unstable rift paths
         using towers, global upgrades, and rune‑powered enemies.
       </p>
       <p>
@@ -748,14 +748,14 @@
         long‑term progression through upgrade currency and global buffs.
       </p>
       <p>
-        This project is created by an individual developer. If you have feedback, ideas, or bug reports,
-        you can reach out at: <b>atbankson@gmail.com</b>.
+        This project is created by an individual developer. Feedback, ideas, or bug reports:
+        <b>atbankson@gmail.com</b>.
       </p>
       <h3 style="font-size:14px;margin-top:10px;">Version Info</h3>
       <ul class="info-list">
-        <li><b>Current Version:</b> v0.3 – Rune Enemies & Map Polish</li>
+        <li><b>Current Version:</b> v0.4 – Dark‑Fantasy Maps & Balance Pass</li>
         <li><b>Core Features:</b> 3 maps, rune enemy types, global upgrades, in‑match upgrades, boss waves, Wooden Money Hut, stats, and weekly update plan.</li>
-        <li><b>Focus:</b> Iterating on balance, readability, and progression pacing.</li>
+        <li><b>Focus:</b> Visual polish, readability, and progression pacing.</li>
       </ul>
     </div>
   </div>
@@ -868,7 +868,7 @@ let selectedMap = 'forest';
 
 let gameState = {
   lives:20,
-  money:150,
+  money:125,
   wave:1,
   running:false,
   paused:false,
@@ -899,7 +899,7 @@ let gameState = {
   }
 };
 
-const STORAGE_KEY = 'runeRiftDefense_v03';
+const STORAGE_KEY = 'runeRiftDefense_v04';
 
 function loadSave(){
   try{
@@ -954,12 +954,12 @@ document.querySelectorAll('.nav-btn[data-go]').forEach(btn=>{
 /* ---------- MAPS ---------- */
 const MAPS = {
   forest:{
-    path:[{x:0,y:180},{x:150,y:180},{x:220,y:130},{x:340,y:130},{x:420,y:220},{x:640,y:220}],
+    path:[{x:0,y:190},{x:150,y:190},{x:230,y:140},{x:340,y:140},{x:430,y:230},{x:640,y:230}],
     obstacles:[
       {x:80,y:120,w:60,h:40,type:'treeCluster'},
       {x:250,y:210,w:70,h:30,type:'logPile'},
       {x:380,y:150,w:40,h:40,type:'rockPatch'},
-      {x:520,y:190,w:60,h:30,type:'bushPatch'}
+      {x:520,y:190,w:60,h:30,type:'glowMush'}
     ],
     bg:'forest'
   },
@@ -969,7 +969,7 @@ const MAPS = {
       {x:80,y:160,w:60,h:40,type:'dune'},
       {x:230,y:230,w:70,h:30,type:'ruinBlock'},
       {x:360,y:180,w:50,h:40,type:'rockCluster'},
-      {x:500,y:210,w:60,h:30,type:'cactusPatch'}
+      {x:500,y:210,w:60,h:30,type:'boneCactus'}
     ],
     bg:'desert'
   },
@@ -979,13 +979,13 @@ const MAPS = {
       {x:100,y:190,w:50,h:40,type:'iceChunk'},
       {x:260,y:140,w:70,h:30,type:'snowDrift'},
       {x:400,y:210,w:50,h:40,type:'frozenRock'},
-      {x:520,y:140,w:60,h:40,type:'pineCluster'}
+      {x:520,y:140,w:60,h:40,type:'frostCrystal'}
     ],
     bg:'frozen'
   }
 };
 
-/* precompute path lengths for smooth movement */
+/* precompute path lengths */
 Object.values(MAPS).forEach(m=>{
   let total=0;
   const segs=[];
@@ -1068,11 +1068,11 @@ const ctx = canvas.getContext('2d');
 
 /* ---------- TOWERS / UPGRADES ---------- */
 const TOWERS = [
-  {key:'dart', name:'Dart', cost:50, baseDamage:5, baseRange:90, baseRate:1.0, shape:'circle'},
-  {key:'cannon', name:'Cannon', cost:100, baseDamage:8, baseRange:100, baseRate:1.5, shape:'square'},
-  {key:'sniper', name:'Sniper', cost:120, baseDamage:10, baseRange:220, baseRate:2.0, shape:'triangle'},
-  {key:'flame', name:'Flamethrower', cost:110, baseDamage:3, baseRange:80, baseRate:0.4, shape:'rect'},
-  {key:'railgun', name:'Railgun', cost:200, baseDamage:15, baseRange:140, baseRate:1.8, shape:'diamond'},
+  {key:'dart', name:'Dart', cost:60, baseDamage:5, baseRange:90, baseRate:0.9, shape:'circle'},
+  {key:'cannon', name:'Cannon', cost:110, baseDamage:11, baseRange:100, baseRate:1.6, shape:'square'},
+  {key:'sniper', name:'Sniper', cost:140, baseDamage:18, baseRange:260, baseRate:2.4, shape:'triangle'},
+  {key:'flame', name:'Flamethrower', cost:90, baseDamage:3.5, baseRange:80, baseRate:0.35, shape:'rect'},
+  {key:'railgun', name:'Railgun', cost:220, baseDamage:26, baseRange:150, baseRate:2.0, shape:'diamond'},
   {key:'bank', name:'Wooden Money Hut', cost:300, baseDamage:0, baseRange:0, baseRate:0, shape:'hut'}
 ];
 TOWERS.sort((a,b)=>a.cost-b.cost);
@@ -1113,700 +1113,12 @@ function renderTowerList(){
   TOWERS.forEach(t=>{
     const btn = document.createElement('button');
     btn.className='tower-btn';
-    btn.innerHTML=`<div>${t.name}</div><span>$${t.cost}</span>`;
-    btn.addEventListener('click',()=>{
-      document.querySelectorAll('.tower-btn').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');
+    btn.innerHTML=`<div>${t.name}</div><span>
+```blockmath
+{t.cost}</span>`;
+    btn.addEventListener(^\primeclick^\prime,()=>{
+      document.querySelectorAll(^\prime.tower-btn^\prime).forEach(b=>b.classList.remove(^\primeselected^\prime));
+      btn.classList.add(^\primeselected^\prime);
       gameState.selectedTowerType = t;
       gameState.placingTower = true;
-      towerInfoEl.textContent = `${t.name} – Cost $${t.cost}`;
-    });
-    towerListEl.appendChild(btn);
-  });
-}
-
-/* meta upgrades UI */
-const metaCurrencyEl = document.getElementById('metaCurrency');
-const upgradeGridEl = document.getElementById('upgradeGrid');
-function updateMetaUI(){ metaCurrencyEl.textContent = gameState.metaCurrency; }
-function renderUpgradeGrid(){
-  upgradeGridEl.innerHTML='';
-  UPGRADE_DEFS.forEach(u=>{
-    const lvl = getUpgradeLevel(u.key);
-    const cost = getUpgradeCost(u.key);
-    const card = document.createElement('div');
-    card.className='stat-card';
-    card.innerHTML=`
-      <div class="stat-label">${u.name}</div>
-      <div class="stat-value">Lv ${lvl} / ${u.max}</div>
-      <p style="margin:4px 0 0;font-size:11px;color:var(--muted);">${u.desc}</p>
-      <p style="margin:2px 0 0;font-size:11px;">Cost: $${cost}</p>
-    `;
-    card.style.cursor='pointer';
-    card.addEventListener('click',()=>{
-      if(lvl>=u.max) return;
-      if(gameState.metaCurrency<cost) return;
-      gameState.metaCurrency-=cost;
-      gameState.globalUpgrades[u.key]=(lvl+1);
-      gameState.stats.globalUpgradesPurchased++;
-      gameState.stats.upgradeCurrencySpent+=cost;
-      saveGame();
-      updateMetaUI();
-      renderUpgradeGrid();
-    });
-    upgradeGridEl.appendChild(card);
-  });
-}
-
-/* stats UI */
-function updateStatsUI(){
-  document.getElementById('statTotalWaves').textContent = gameState.stats.totalWaves;
-  document.getElementById('statTotalEnemies').textContent = gameState.stats.totalEnemies;
-  document.getElementById('statTotalBosses').textContent = gameState.stats.totalBosses;
-  document.getElementById('statUpgradeCurrency').textContent = gameState.stats.upgradeCurrencyEarned;
-  document.getElementById('statRunsPlayed').textContent = gameState.stats.runsPlayed;
-  document.getElementById('statHighestWave').textContent = gameState.stats.highestWave;
-  document.getElementById('statBestForest').textContent = gameState.stats.bestForest;
-  document.getElementById('statBestDesert').textContent = gameState.stats.bestDesert;
-  document.getElementById('statBestFrozen').textContent = gameState.stats.bestFrozen;
-  document.getElementById('statGlobalUpgrades').textContent = gameState.stats.globalUpgradesPurchased;
-  document.getElementById('statUpgradeSpent').textContent = gameState.stats.upgradeCurrencySpent;
-}
-
-/* HUD */
-function updateHUD(){
-  hudLives.textContent = gameState.lives;
-  hudMoney.textContent = gameState.money;
-  hudWave.textContent = gameState.wave;
-}
-
-/* run start */
-function startNewRun(){
-  gameState.lives=20;
-  gameState.money=150;
-  gameState.wave=1;
-  gameState.enemies=[];
-  gameState.towers=[];
-  gameState.projectiles=[];
-  gameState.running=true;
-  gameState.paused=false;
-  gameState.speed=1;
-  gameState.autoWave=false;
-  gameState.waveActive=false;
-  gameState.stats.runsPlayed++;
-  autoWaveBtn.textContent='🔁 Auto Off';
-  pauseBtn.textContent='⏸️ Pause';
-  speedBtn.textContent='⏩ x1';
-  updateHUD();
-  saveGame();
-}
-
-/* ---------- ENEMY PATHING (FIXED) ---------- */
-/* enemies use progress 0..1 along precomputed path length */
-function getEnemyPos(e){
-  const map = MAPS[selectedMap];
-  const total = map._length;
-  let dist = e.progress * total;
-  if(dist<=0) return map.path[0];
-  for(const seg of map._segments){
-    if(dist<=seg.len){
-      const r = dist/seg.len;
-      return {
-        x: seg.a.x + (seg.b.x-seg.a.x)*r,
-        y: seg.a.y + (seg.b.y-seg.a.y)*r
-      };
-    }
-    dist-=seg.len;
-  }
-  return map.path[map.path.length-1];
-}
-
-function spawnWave(){
-  gameState.enemies=[];
-  gameState.waveActive=true;
-  const wave = gameState.wave;
-  const baseCount = 6 + wave*2;
-  for(let i=0;i<baseCount;i++){
-    const typeRoll = Math.random();
-    let enemyType;
-    if(wave%15===0 && i===0){
-      enemyType='boss';
-    }else if(typeRoll<0.5){
-      enemyType='basic';
-    }else if(typeRoll<0.75){
-      enemyType='fast';
-    }else{
-      enemyType='tank';
-    }
-
-    let hp=10+wave*2;
-    let speed=0.12;
-    if(enemyType==='fast'){hp*=0.6;speed=0.22;}
-    if(enemyType==='tank'){hp*=2.0;speed=0.08;}
-    if(enemyType==='boss'){hp*=6.0;speed=0.07;}
-
-    gameState.enemies.push({
-      progress:-i*0.08,   // staggered spawn behind start
-      hp,
-      maxHp:hp,
-      type:enemyType,
-      speed
-    });
-  }
-}
-
-function endWave(){
-  if(!gameState.waveActive) return;
-  gameState.waveActive=false;
-
-  gameState.stats.totalWaves++;
-  if(gameState.wave>gameState.stats.highestWave) gameState.stats.highestWave=gameState.wave;
-  if(selectedMap==='forest' && gameState.wave>gameState.stats.bestForest) gameState.stats.bestForest=gameState.wave;
-  if(selectedMap==='desert' && gameState.wave>gameState.stats.bestDesert) gameState.stats.bestDesert=gameState.wave;
-  if(selectedMap==='frozen' && gameState.wave>gameState.stats.bestFrozen) gameState.stats.bestFrozen=gameState.wave;
-
-  let bankIncome=0;
-  gameState.towers.forEach(t=>{
-    if(t.type.key==='bank') bankIncome+=100*t.bankLevel;
-  });
-  gameState.money+=bankIncome;
-
-  if(gameState.wave>0 && gameState.wave%50===0){
-    gameState.metaCurrency+=150;
-    gameState.stats.upgradeCurrencyEarned+=150;
-  }
-
-  gameState.wave++;
-  updateHUD();
-  updateMetaUI();
-  saveGame();
-
-  if(gameState.autoWave && gameState.running){
-    spawnWave();
-  }
-}
-
-function loseLife(amount){
-  gameState.lives-=amount;
-  if(gameState.lives<=0){
-    gameState.lives=0;
-    gameState.running=false;
-    gameOverOverlay.classList.add('visible');
-  }
-  updateHUD();
-}
-
-/* ---------- TOWER STATS ---------- */
-function getTowerRangeWithUpgrades(type,level){
-  let range = type.baseRange;
-  const rLvl = getUpgradeLevel('range');
-  if(rLvl>0) range*=Math.pow(2,rLvl);
-  range*=(1+0.2*level);
-  return range;
-}
-function getTowerDamageWithUpgrades(type,level){
-  let dmg = type.baseDamage;
-  const dLvl = getUpgradeLevel('damage');
-  if(dLvl>0) dmg*=Math.pow(2,dLvl);
-  dmg*=(1+0.2*level);
-  return dmg;
-}
-function getTowerRateWithUpgrades(type,level){
-  let rate = type.baseRate;
-  const fLvl = getUpgradeLevel('firerate');
-  if(fLvl>0) rate/=Math.pow(2,fLvl);
-  rate/=(1+0.2*level);
-  return rate;
-}
-
-/* ---------- PLACEMENT ---------- */
-function pointToSegmentDistance(p,a,b){
-  const dx=b.x-a.x, dy=b.y-a.y;
-  if(dx===0 && dy===0) return Math.hypot(p.x-a.x,p.y-a.y);
-  const t=((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy);
-  if(t<0) return Math.hypot(p.x-a.x,p.y-a.y);
-  if(t>1) return Math.hypot(p.x-b.x,p.y-b.y);
-  const proj={x:a.x+dx*t,y:a.y+dy*t};
-  return Math.hypot(p.x-proj.x,p.y-proj.y);
-}
-function canPlaceTowerAt(x,y,type){
-  if(x<20||x>canvas.width-20||y<20||y>canvas.height-20) return false;
-  const map = MAPS[selectedMap];
-  for(let i=0;i<map.path.length-1;i++){
-    const a=map.path[i], b=map.path[i+1];
-    const dist = pointToSegmentDistance({x,y},a,b);
-    if(dist<25) return false;
-  }
-  for(const o of map.obstacles){
-    if(x>o.x-15 && x<o.x+o.w+15 && y>o.y-15 && y<o.y+o.h+15) return false;
-  }
-  for(const t of gameState.towers){
-    if(Math.hypot(t.x-x,t.y-y)<24) return false;
-  }
-  return true;
-}
-
-canvas.addEventListener('mousemove',e=>{
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.clientX-rect.left)*(canvas.width/rect.width);
-  const y = (e.clientY-rect.top)*(canvas.height/rect.height);
-  gameState.hoverPos={x,y};
-});
-canvas.addEventListener('click',e=>{
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.clientX-rect.left)*(canvas.width/rect.width);
-  const y = (e.clientY-rect.top)*(canvas.height/rect.height);
-
-  if(gameState.placingTower && gameState.selectedTowerType){
-    const t = gameState.selectedTowerType;
-    const valid = canPlaceTowerAt(x,y,t);
-    if(valid && gameState.money>=t.cost){
-      gameState.money-=t.cost;
-      const tower={
-        x,y,
-        type:t,
-        level:0,
-        cooldown:0,
-        bankLevel:t.key==='bank'?1:0
-      };
-      gameState.towers.push(tower);
-      gameState.placingTower=false;
-      gameState.selectedTowerType=null;
-      document.querySelectorAll('.tower-btn').forEach(b=>b.classList.remove('selected'));
-      towerInfoEl.textContent='Tower placed.';
-      updateHUD();
-    }
-    return;
-  }
-
-  let found=null;
-  for(const tower of gameState.towers){
-    if(Math.hypot(tower.x-x,tower.y-y)<12){found=tower;break;}
-  }
-  if(found){
-    gameState.selectedTowerInstance=found;
-    showTowerUpgradePanel(found);
-  }else{
-    hideTowerUpgradePanel();
-  }
-});
-
-/* ---------- TOWER UPGRADE PANEL ---------- */
-const towerUpgradePanel = document.getElementById('towerUpgradePanel');
-const towerUpgradeTitle = document.getElementById('towerUpgradeTitle');
-const towerUpgradeStats = document.getElementById('towerUpgradeStats');
-const towerUpgradeLevel = document.getElementById('towerUpgradeLevel');
-const towerUpgradeCost = document.getElementById('towerUpgradeCost');
-const towerUpgradeButton = document.getElementById('towerUpgradeButton');
-
-function getTowerUpgradeCost(level){
-  if(level===0) return 50;
-  if(level===1) return 75;
-  if(level===2) return 100;
-  if(level===3) return 150;
-  if(level===4) return 200;
-  if(level===5) return 250;
-  if(level===6) return 300;
-  return 9999;
-}
-function showTowerUpgradePanel(tower){
-  towerUpgradePanel.classList.add('visible');
-  const lvl = tower.level;
-  const dmg = getTowerDamageWithUpgrades(tower.type,lvl).toFixed(1);
-  const range = getTowerRangeWithUpgrades(tower.type,lvl).toFixed(0);
-  const rate = getTowerRateWithUpgrades(tower.type,lvl).toFixed(2);
-  towerUpgradeTitle.textContent = tower.type.key==='bank'?'Wooden Money Hut':tower.type.name;
-  if(tower.type.key==='bank'){
-    towerUpgradeStats.textContent=`Income: $${100*tower.bankLevel} / wave`;
-  }else{
-    towerUpgradeStats.textContent=`Damage: ${dmg} • Range: ${range} • Rate: ${rate}s`;
-  }
-  towerUpgradeLevel.textContent=`Level: ${lvl+1} / 8`;
-  const cost = getTowerUpgradeCost(lvl);
-  towerUpgradeCost.textContent=`Upgrade Cost: $${cost}`;
-  towerUpgradeButton.disabled = (lvl>=7 || gameState.money<cost);
-}
-function hideTowerUpgradePanel(){
-  towerUpgradePanel.classList.remove('visible');
-  gameState.selectedTowerInstance=null;
-}
-towerUpgradeButton.addEventListener('click',()=>{
-  const tower = gameState.selectedTowerInstance;
-  if(!tower) return;
-  const lvl = tower.level;
-  if(lvl>=7) return;
-  const cost = getTowerUpgradeCost(lvl);
-  if(gameState.money<cost) return;
-  gameState.money-=cost;
-  tower.level++;
-  if(tower.type.key==='bank') tower.bankLevel++;
-  updateHUD();
-  showTowerUpgradePanel(tower);
-});
-
-/* ---------- BACKGROUND (NON‑GLITCH) ---------- */
-function drawPath(dark,light){
-  const map = MAPS[selectedMap];
-  ctx.lineCap='round';
-
-  ctx.lineWidth=46;
-  ctx.strokeStyle='rgba(0,0,0,0.35)';
-  ctx.beginPath();
-  ctx.moveTo(map.path[0].x,map.path[0].y+4);
-  for(let i=1;i<map.path.length;i++) ctx.lineTo(map.path[i].x,map.path[i].y+4);
-  ctx.stroke();
-
-  ctx.lineWidth=40;
-  ctx.strokeStyle=dark;
-  ctx.beginPath();
-  ctx.moveTo(map.path[0].x,map.path[0].y);
-  for(let i=1;i<map.path.length;i++) ctx.lineTo(map.path[i].x,map.path[i].y);
-  ctx.stroke();
-
-  ctx.lineWidth=26;
-  ctx.strokeStyle=light;
-  ctx.beginPath();
-  ctx.moveTo(map.path[0].x,map.path[0].y);
-  for(let i=1;i<map.path.length;i++) ctx.lineTo(map.path[i].x,map.path[i].y);
-  ctx.stroke();
-}
-
-function drawObstacles(){
-  const map = MAPS[selectedMap];
-  map.obstacles.forEach(o=>{
-    ctx.save();
-    if(o.type==='treeCluster'){
-      ctx.fillStyle='#234b2a';
-      ctx.beginPath();ctx.arc(o.x+10,o.y+10,12,0,Math.PI*2);ctx.fill();
-      ctx.beginPath();ctx.arc(o.x+30,o.y+18,14,0,Math.PI*2);ctx.fill();
-      ctx.beginPath();ctx.arc(o.x+22,o.y+28,10,0,Math.PI*2);ctx.fill();
-    }else if(o.type==='logPile'){
-      ctx.fillStyle='#6b4a2b';
-      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,6);ctx.fill();
-      ctx.fillStyle='#4b2a1b';
-      ctx.fillRect(o.x+6,o.y+4,o.w-12,4);
-    }else if(o.type==='rockPatch'){
-      ctx.fillStyle='#4b555f';
-      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,8);ctx.fill();
-      ctx.fillStyle='#7b8a96';
-      ctx.beginPath();ctx.arc(o.x+12,o.y+12,6,0,Math.PI*2);ctx.fill();
-    }else if(o.type==='bushPatch'){
-      ctx.fillStyle='#2f5a2f';
-      ctx.beginPath();ctx.arc(o.x+10,o.y+18,10,0,Math.PI*2);ctx.fill();
-      ctx.beginPath();ctx.arc(o.x+30,o.y+14,12,0,Math.PI*2);ctx.fill();
-    }else if(o.type==='dune'){
-      ctx.fillStyle='#e8c27a';
-      ctx.beginPath();ctx.ellipse(o.x+o.w/2,o.y+o.h/2,o.w/2,o.h/2,0,0,Math.PI*2);ctx.fill();
-    }else if(o.type==='ruinBlock'){
-      ctx.fillStyle='#b8aa8a';
-      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,4);ctx.fill();
-      ctx.fillStyle='#8a7a5a';
-      ctx.fillRect(o.x+6,o.y+6,o.w-12,4);
-    }else if(o.type==='rockCluster'){
-      ctx.fillStyle='#7b6b5a';
-      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,6);ctx.fill();
-    }else if(o.type==='cactusPatch'){
-      ctx.fillStyle='#2f7a3a';
-      ctx.fillRect(o.x+10,o.y+4,8,o.h-4);
-      ctx.fillRect(o.x+24,o.y+8,8,o.h-8);
-    }else if(o.type==='iceChunk'){
-      ctx.fillStyle='#d0e8ff';
-      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,6);ctx.fill();
-      ctx.fillStyle='#f5fbff';
-      ctx.beginPath();ctx.arc(o.x+14,o.y+12,6,0,Math.PI*2);ctx.fill();
-    }else if(o.type==='snowDrift'){
-      ctx.fillStyle='#f5f9ff';
-      ctx.beginPath();ctx.ellipse(o.x+o.w/2,o.y+o.h/2,o.w/2,o.h/2,0,0,Math.PI*2);ctx.fill();
-    }else if(o.type==='frozenRock'){
-      ctx.fillStyle='#9bb0c8';
-      ctx.beginPath();ctx.roundRect(o.x,o.y,o.w,o.h,6);ctx.fill();
-    }else if(o.type==='pineCluster'){
-      ctx.fillStyle='#234b2a';
-      ctx.beginPath();ctx.moveTo(o.x+20,o.y);ctx.lineTo(o.x+8,o.y+24);ctx.lineTo(o.x+32,o.y+24);ctx.closePath();ctx.fill();
-      ctx.beginPath();ctx.moveTo(o.x+20,o.y+10);ctx.lineTo(o.x+10,o.y+30);ctx.lineTo(o.x+30,o.y+30);ctx.closePath();ctx.fill();
-    }
-    ctx.restore();
-  });
-}
-
-function drawDetailedBackground(){
-  const map = MAPS[selectedMap];
-  if(map.bg==='forest'){
-    const grad = ctx.createLinearGradient(0,0,0,canvas.height);
-    grad.addColorStop(0,'#2f5b32');
-    grad.addColorStop(0.5,'#234327');
-    grad.addColorStop(1,'#132017');
-    ctx.fillStyle=grad;
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle='rgba(255,255,255,0.03)';
-    for(let i=0;i<10;i++){
-      const x=40+i*60;
-      const y=40+((i*37)%200);
-      const r=3;
-      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
-    }
-
-    drawPath('#3b2a18','#6b4a28');
-  }else if(map.bg==='desert'){
-    const grad = ctx.createLinearGradient(0,0,0,canvas.height);
-    grad.addColorStop(0,'#f3d38a');
-    grad.addColorStop(0.5,'#e0b05c');
-    grad.addColorStop(1,'#b47a34');
-    ctx.fillStyle=grad;
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle='rgba(255,255,255,0.06)';
-    for(let i=0;i<10;i++){
-      const x=30+i*60;
-      const y=60+((i*53)%180);
-      const w=30;
-      const h=6;
-      ctx.beginPath();ctx.ellipse(x,y,w,h,0,0,Math.PI*2);ctx.fill();
-    }
-
-    drawPath('#7b5a33','#a67c52');
-  }else{
-    const grad = ctx.createLinearGradient(0,0,0,canvas.height);
-    grad.addColorStop(0,'#e0f2ff');
-    grad.addColorStop(0.5,'#b5d4f5');
-    grad.addColorStop(1,'#7a9ac5');
-    ctx.fillStyle=grad;
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle='rgba(255,255,255,0.4)';
-    for(let i=0;i<8;i++){
-      const x=60+i*70;
-      const y=40+((i*41)%120);
-      const w=30;
-      const h=10;
-      ctx.beginPath();ctx.ellipse(x,y,w,h,0,0,Math.PI*2);ctx.fill();
-    }
-
-    drawPath('#b0c4de','#e0f0ff');
-  }
-  drawObstacles();
-}
-
-/* ---------- DRAW ENEMIES / TOWERS / PROJECTILES ---------- */
-function drawEnemies(){
-  gameState.enemies.forEach(e=>{
-    const pos = getEnemyPos(e);
-    let color='#4cafef';
-    let glowColor='#4cafef';
-    let shape='circle';
-    if(e.type==='basic'){color='#4cafef';glowColor='#4cafef';shape='circle';}
-    if(e.type==='fast'){color='#00e5ff';glowColor='#00e5ff';shape='triangle';}
-    if(e.type==='tank'){color='#ffb347';glowColor='#ffb347';shape='square';}
-    if(e.type==='boss'){color='#b76bff';glowColor='#b76bff';shape='diamond';}
-
-    ctx.save();
-    ctx.shadowColor=glowColor;
-    ctx.shadowBlur=14;
-    ctx.fillStyle=color;
-
-    if(shape==='circle'){
-      ctx.beginPath();ctx.arc(pos.x,pos.y,10,0,Math.PI*2);ctx.fill();
-    }else if(shape==='triangle'){
-      ctx.beginPath();
-      ctx.moveTo(pos.x,pos.y-11);
-      ctx.lineTo(pos.x+10,pos.y+9);
-      ctx.lineTo(pos.x-10,pos.y+9);
-      ctx.closePath();
-      ctx.fill();
-    }else if(shape==='square'){
-      ctx.beginPath();ctx.rect(pos.x-10,pos.y-10,20,20);ctx.fill();
-    }else if(shape==='diamond'){
-      ctx.beginPath();
-      ctx.moveTo(pos.x,pos.y-12);
-      ctx.lineTo(pos.x+12,pos.y);
-      ctx.lineTo(pos.x,pos.y+12);
-      ctx.lineTo(pos.x-12,pos.y);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    ctx.restore();
-
-    const hpRatio = Math.max(0,e.hp/e.maxHp);
-    const barW=18, barH=3;
-    ctx.fillStyle='rgba(0,0,0,0.6)';
-    ctx.fillRect(pos.x-barW/2,pos.y-16,barW,barH);
-    ctx.fillStyle='#4caf50';
-    ctx.fillRect(pos.x-barW/2,pos.y-16,barW*hpRatio,barH);
-  });
-}
-
-function drawTowerShape(t){
-  ctx.save();
-  ctx.translate(t.x,t.y);
-  if(t.type.shape==='circle'){
-    ctx.fillStyle='#4cafef';
-    ctx.beginPath();ctx.arc(0,0,10,0,Math.PI*2);ctx.fill();
-  }else if(t.type.shape==='square'){
-    ctx.fillStyle='#ffb347';
-    ctx.beginPath();ctx.rect(-10,-10,20,20);ctx.fill();
-  }else if(t.type.shape==='triangle'){
-    ctx.fillStyle='#9b59b6';
-    ctx.beginPath();
-    ctx.moveTo(0,-12);ctx.lineTo(10,8);ctx.lineTo(-10,8);ctx.closePath();ctx.fill();
-  }else if(t.type.shape==='rect'){
-    ctx.fillStyle='#e74c3c';
-    ctx.beginPath();ctx.rect(-12,-8,24,16);ctx.fill();
-  }else if(t.type.shape==='diamond'){
-    ctx.fillStyle='#00e5ff';
-    ctx.beginPath();
-    ctx.moveTo(0,-12);ctx.lineTo(10,0);ctx.lineTo(0,12);ctx.lineTo(-10,0);ctx.closePath();ctx.fill();
-  }else if(t.type.shape==='hut'){
-    ctx.fillStyle='#7b4a2b';
-    ctx.fillRect(-10,-8,20,14);
-    ctx.fillStyle='#3f6b3f';
-    ctx.beginPath();
-    ctx.moveTo(-12,-8);ctx.lineTo(0,-16);ctx.lineTo(12,-8);ctx.closePath();ctx.fill();
-  }
-  ctx.restore();
-}
-function drawTowers(){ gameState.towers.forEach(drawTowerShape); }
-function drawProjectiles(){
-  ctx.fillStyle='#ffffff';
-  gameState.projectiles.forEach(p=>{
-    ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();
-  });
-}
-
-/* ghost placement */
-function drawGhost(){
-  if(!gameState.placingTower || !gameState.selectedTowerType) return;
-  const t = gameState.selectedTowerType;
-  const pos = gameState.hoverPos;
-  const validPlacement = canPlaceTowerAt(pos.x,pos.y,t);
-  const hasMoney = gameState.money>=t.cost;
-  const ok = validPlacement && hasMoney;
-  const range = getTowerRangeWithUpgrades(t,0);
-  ctx.save();
-  ctx.globalAlpha=0.25;
-  ctx.fillStyle = ok? '#4caf50' : '#ff4b6a';
-  ctx.beginPath();ctx.arc(pos.x,pos.y,range,0,Math.PI*2);ctx.fill();
-  ctx.globalAlpha=0.8;
-  ctx.translate(pos.x,pos.y);
-  ctx.fillStyle = ok? '#4caf50' : '#ff4b6a';
-  if(t.shape==='circle'){
-    ctx.beginPath();ctx.arc(0,0,10,0,Math.PI*2);ctx.fill();
-  }else if(t.shape==='square'){
-    ctx.beginPath();ctx.rect(-10,-10,20,20);ctx.fill();
-  }else if(t.shape==='triangle'){
-    ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(10,8);ctx.lineTo(-10,8);ctx.closePath();ctx.fill();
-  }else if(t.shape==='rect'){
-    ctx.beginPath();ctx.rect(-12,-8,24,16);ctx.fill();
-  }else if(t.shape==='diamond'){
-    ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(10,0);ctx.lineTo(0,12);ctx.lineTo(-10,0);ctx.closePath();ctx.fill();
-  }else if(t.shape==='hut'){
-    ctx.fillRect(-10,-8,20,14);
-    ctx.beginPath();ctx.moveTo(-12,-8);ctx.lineTo(0,-16);ctx.lineTo(12,-8);ctx.closePath();ctx.fill();
-  }
-  ctx.restore();
-}
-
-/* ---------- GAME LOOP ---------- */
-let lastTime=0;
-function update(dt){
-  if(!gameState.running || gameState.paused) return;
-  const step = dt*gameState.speed;
-
-  /* enemies move along progress 0..1 */
-  gameState.enemies.forEach(e=>{
-    e.progress += e.speed*step;
-  });
-
-  /* check end of path */
-  for(let i=gameState.enemies.length-1;i>=0;i--){
-    const e = gameState.enemies[i];
-    if(e.progress>=1){
-      loseLife(e.type==='boss'?5:1);
-      gameState.enemies.splice(i,1);
-    }
-  }
-
-  /* towers fire */
-  gameState.towers.forEach(t=>{
-    if(t.type.key==='bank') return;
-    t.cooldown-=step;
-    if(t.cooldown<=0){
-      let target=null, bestProg=-1;
-      const range = getTowerRangeWithUpgrades(t.type,t.level);
-      gameState.enemies.forEach(e=>{
-        const pos=getEnemyPos(e);
-        const d=Math.hypot(pos.x-t.x,pos.y-t.y);
-        if(d<=range && e.progress>bestProg){bestProg=e.progress;target={enemy:e,pos};}
-      });
-      if(target){
-        const dmg = getTowerDamageWithUpgrades(t.type,t.level);
-        gameState.projectiles.push({x:t.x,y:t.y,tx:target.pos.x,ty:target.pos.y,dmg});
-        t.cooldown = getTowerRateWithUpgrades(t.type,t.level);
-      }else{
-        t.cooldown=0.1;
-      }
-    }
-  });
-
-  /* projectiles */
-  for(let i=gameState.projectiles.length-1;i>=0;i--){
-    const p = gameState.projectiles[i];
-    const dx=p.tx-p.x, dy=p.ty-p.y;
-    const dist=Math.hypot(dx,dy);
-    const speedP=260*step;
-    if(dist<=speedP){
-      let hitIndex=-1, bestDist=9999;
-      for(let j=0;j<gameState.enemies.length;j++){
-        const e=gameState.enemies[j];
-        const pos=getEnemyPos(e);
-        const d=Math.hypot(pos.x-p.tx,pos.y-p.ty);
-        if(d<18 && d<bestDist){bestDist=d;hitIndex=j;}
-      }
-      if(hitIndex>=0){
-        const e=gameState.enemies[hitIndex];
-        e.hp-=p.dmg;
-        if(e.hp<=0){
-          gameState.money+=e.type==='boss'?20:5;
-          gameState.stats.totalEnemies++;
-          if(e.type==='boss') gameState.stats.totalBosses++;
-          gameState.enemies.splice(hitIndex,1);
-          updateHUD();
-        }
-      }
-      gameState.projectiles.splice(i,1);
-    }else{
-      p.x+=dx/dist*speedP;
-      p.y+=dy/dist*speedP;
-    }
-  }
-
-  /* wave end */
-  if(gameState.waveActive && gameState.enemies.length===0){
-    endWave();
-  }
-}
-
-function loop(timestamp){
-  const dt=(timestamp-lastTime)/1000;
-  lastTime=timestamp;
-  drawDetailedBackground();
-  drawEnemies();
-  drawTowers();
-  drawProjectiles();
-  drawGhost();
-  update(dt);
-  requestAnimationFrame(loop);
-}
-
-/* ---------- INIT ---------- */
-loadSave();
-renderTowerList();
-updateMetaUI();
-renderUpgradeGrid();
-updateStatsUI();
-updateHUD();
-requestAnimationFrame(loop);
-</script>
-</body>
-</html>
+      towerInfoEl.textContent = `${t.name} – Cost
